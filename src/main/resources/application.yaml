@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    username: postgres
+    url: jdbc:postgresql://localhost:5432/postgres
+    driverClassName: org.postgresql.Driver
+    password: 123456
+  application:
+    name: Aplicacao REST de uma plataforma Todos Eventos
+server:
+  port: '27031'
