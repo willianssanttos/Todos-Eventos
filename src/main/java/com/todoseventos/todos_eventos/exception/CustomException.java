@@ -1,11 +1,8 @@
 package com.todoseventos.todos_eventos.exception;
 
-import org.springframework.stereotype.Component;
+public class CustomException extends  RuntimeException {
 
-@Component
-public class Excecoes  extends  RuntimeException {
-
-    public Excecoes(String message){
+    public CustomException(String message){
         super(message);
     }
 }

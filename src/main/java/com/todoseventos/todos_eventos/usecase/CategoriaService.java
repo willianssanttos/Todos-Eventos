@@ -12,7 +12,6 @@ public class CategoriaService {
     @Autowired
     private CategoriaDao categoriaDao;
 
-
     public CategoriaModel procurarCategoriaPorNome(CategoriaEnum e){
         return categoriaDao.findNomeCategoria(e.name());
     }

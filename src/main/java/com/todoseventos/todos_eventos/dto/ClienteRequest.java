@@ -1,26 +1,23 @@
 package com.todoseventos.todos_eventos.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
-
-import java.time.LocalDate;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class PessoaRequest {
+public class ClienteRequest {
 
     private Long idPessoa;
     private String nome;
-    private String cpf; // campo para pessoa física
-    private String cnpj; // campo para pessoa jurídica
+    private String cpf;
+    private String cnpj;
     private String email;
     private String senha;
     private String telefone;
-    private LocalDate dataNascimento;
-    private TipoPessoaEnum tipo_pessoa;
-
-
-
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    private String dataNascimento;
+    private TipoClienteEnum tipo_pessoa;
 }

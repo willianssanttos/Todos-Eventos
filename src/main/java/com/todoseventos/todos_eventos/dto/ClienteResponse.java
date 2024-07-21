@@ -2,14 +2,12 @@ package com.todoseventos.todos_eventos.dto;
 
 import lombok.*;
 
-import java.time.LocalDate;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class PessoaResponse {
+public class ClienteResponse {
 
     private Long idPessoa;
     private String nome;
@@ -17,7 +15,7 @@ public class PessoaResponse {
     private String senha;
     private String telefone;
     private String cpf;
-    private LocalDate dataNascimento;
+    private String dataNascimento;
     private String cnpj;
-    private TipoPessoaEnum tipo_pessoa;
+    private TipoClienteEnum tipo_pessoa;
 }

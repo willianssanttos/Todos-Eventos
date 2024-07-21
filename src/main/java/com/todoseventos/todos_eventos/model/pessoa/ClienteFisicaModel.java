@@ -1,6 +1,5 @@
 package com.todoseventos.todos_eventos.model.pessoa;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,9 +11,12 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class TipoPessoaModel implements Serializable {
+public class ClienteFisicaModel implements Serializable {
 
-    private Integer idTipoPessoa;
+    private Long idPessoa;
 
-    private String nomeTipoPessoa;
+    private String cpf;
+
+    private String dataNascimento;
+
 }

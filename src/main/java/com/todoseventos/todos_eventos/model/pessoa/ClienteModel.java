@@ -6,18 +6,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class PessoaFisicaModel implements Serializable {
+public class ClienteModel implements Serializable {
 
-    private Integer idPessoa;
-
+    private Long idPessoa;
+    private String nome;
     private String cpf;
-
-    private LocalDate dataNascimento;
-
+    private String cnpj;
+    private String email;
+    private String senha;
+    private String telefone;
+    private String dataNascimento;
+    private Integer tipo_pessoa;
 }
+
