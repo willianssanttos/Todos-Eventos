@@ -55,7 +55,7 @@ public class ClienteController {
                                                  @RequestBody ClienteRequest clienteRequest) {
         try {
             ClienteResponse response = clienteService.atualizarPessoa(identificador, clienteRequest);
-            return ResponseEntity.ok(new ApiResponse("Cliente atualizado com sucesso!", null));
+            return ResponseEntity.ok(new ApiResponse("Cliente atualizado com sucesso!", response));
         } catch (CustomException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(e.getMessage(), null));
         } catch (Exception e) {

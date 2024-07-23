@@ -12,6 +12,7 @@ import com.todoseventos.todos_eventos.model.pessoa.ClienteFisicaModel;
 import com.todoseventos.todos_eventos.model.pessoa.ClienteJuridicaModel;
 import com.todoseventos.todos_eventos.model.pessoa.ClienteModel;
 import com.todoseventos.todos_eventos.model.pessoa.TipoClienteModel;
+import com.todoseventos.todos_eventos.security.PasswordSecurity;
 import com.todoseventos.todos_eventos.utils.Validacao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -85,15 +86,13 @@ public class ClienteService {
         }
 
         clienteRequest.setTelefone(validacao.formatarNumeroTelefone(clienteRequest.getTelefone()));
+        String tokenSenha = PasswordSecurity.generateToken();
 
         ClienteModel pessoa = ClienteModel.builder()
                 .nome(clienteRequest.getNome())
                 .email(clienteRequest.getEmail())
-                .senha(clienteRequest.getSenha())
+                .senha(tokenSenha)
                 .telefone(clienteRequest.getTelefone())
-                .cpf(clienteRequest.getCpf())
-                .cnpj(clienteRequest.getCnpj())
-                .dataNascimento(clienteRequest.getDataNascimento())
                 .tipo_pessoa(tipoClienteModel.getIdTipoPessoa())
                 .build();
 
@@ -118,17 +117,22 @@ public class ClienteService {
     }
 
     private static ClienteResponse mapearPessoa(TipoClienteEnum tipo_pessoa, ClienteModel pessoaSalva){
-        return ClienteResponse.builder()
+        ClienteResponse.ClienteResponseBuilder builder = ClienteResponse.builder()
                 .nome(pessoaSalva.getNome())
                 .email(pessoaSalva.getEmail())
                 .senha(pessoaSalva.getSenha())
                 .telefone(pessoaSalva.getTelefone())
                 .tipo_pessoa(tipo_pessoa)
-                .idPessoa(pessoaSalva.getIdPessoa())
-                .cpf(pessoaSalva.getCpf())
-                .dataNascimento(pessoaSalva.getDataNascimento())
-                .cnpj(pessoaSalva.getCnpj())
-                .build();
+                .idPessoa(pessoaSalva.getIdPessoa());
+
+        if (tipo_pessoa == TipoClienteEnum.FISICA) {
+            builder.cpf(pessoaSalva.getCpf())
+                    .dataNascimento(pessoaSalva.getDataNascimento());
+
+        } else if (tipo_pessoa == TipoClienteEnum.JURIDICA) {
+            builder.cnpj(pessoaSalva.getCnpj());
+        }
+        return builder.build();
     }
 
     public ClienteResponse procurarPessoaPorCpf(String cpf) {
@@ -195,12 +199,12 @@ public class ClienteService {
         pessoaExistente.setTelefone(clienteRequest.getTelefone());
         pessoaExistente.setTipo_pessoa(tipoClienteModel.getIdTipoPessoa());
 
-        clienteDao.update(pessoaExistente);
+        ClienteModel clienteAtualizado = clienteDao.update(pessoaExistente);
 
         if (clienteRequest.getTipo_pessoa() == TipoClienteEnum.FISICA){
             ClienteFisicaModel pessoaFisica = clienteFisicaDao.findByCpf(identificador);
             if (pessoaFisica != null) {
-                pessoaFisica.setIdPessoa(clienteRequest.getIdPessoa());
+                pessoaFisica.setIdPessoa(pessoaExistente.getIdPessoa());
                 pessoaFisica.setCpf(clienteRequest.getCpf());
                 pessoaFisica.setDataNascimento(clienteRequest.getDataNascimento());
                 clienteFisicaDao.update(pessoaFisica);
@@ -208,13 +212,13 @@ public class ClienteService {
         } else if (clienteRequest.getTipo_pessoa() == TipoClienteEnum.JURIDICA) {
             ClienteJuridicaModel pessoaJuridica = clienteJuridicaDao.findByCnpj(identificador);
             if (pessoaJuridica != null) {
-                pessoaJuridica.setIdPessoa(clienteRequest.getIdPessoa());
+                pessoaJuridica.setIdPessoa(pessoaExistente.getIdPessoa());
                 pessoaJuridica.setCnpj(clienteRequest.getCnpj());
                 clienteJuridicaDao.update(pessoaJuridica);
             }
         }
 
-        return mapearPessoa(TipoClienteEnum.valueOf(tipoClienteModel.getNomeTipoPessoa()), pessoaExistente);
+        return mapearPessoa(TipoClienteEnum.valueOf(tipoClienteModel.getNomeTipoPessoa()), clienteAtualizado);
     }
 }
 

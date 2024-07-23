@@ -2,6 +2,7 @@ package com.todoseventos.todos_eventos.dao;
 
 import com.todoseventos.todos_eventos.model.pessoa.ClienteFisicaModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -19,17 +20,16 @@ public class ClienteFisicaDao {
     }
 
     public ClienteFisicaModel update(ClienteFisicaModel pessoaFisica){
-        String sql = "UPDATE PESSOA_FISICA SET cpf = ?, dataNascimento = ? WHERE cpf = ?";
-        jdbcTemplate.update(sql, pessoaFisica.getDataNascimento(), pessoaFisica.getCpf());
+        String sql = "UPDATE PESSOA_FISICA SET cpf = ?, dataNascimento = ? WHERE id_pessoa = ?";
+        jdbcTemplate.update(sql, pessoaFisica.getCpf(), pessoaFisica.getDataNascimento(), pessoaFisica.getIdPessoa());
         return pessoaFisica;
     }
-
 
     public ClienteFisicaModel findByCpf(String cpf) {
         try {
             String sql = "SELECT * FROM PESSOA_FISICA WHERE cpf = ?";
             return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ClienteFisicaModel.class), cpf);
-        } catch (Exception e) {
+        } catch (EmptyResultDataAccessException e) {
             return null;
         }
     }

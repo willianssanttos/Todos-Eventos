@@ -2,6 +2,7 @@ package com.todoseventos.todos_eventos.dao;
 
 import com.todoseventos.todos_eventos.model.pessoa.ClienteJuridicaModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -28,8 +29,9 @@ public class ClienteJuridicaDao {
         try {
             String sql = "SELECT * FROM PESSOA_JURIDICA WHERE cnpj = ?";
             return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ClienteJuridicaModel.class), cnpj);
-        } catch (Exception e){
+        } catch (EmptyResultDataAccessException e) {
             return null;
         }
     }
 }
+
