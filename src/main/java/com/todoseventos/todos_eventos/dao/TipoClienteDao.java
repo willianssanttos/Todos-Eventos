@@ -12,10 +12,6 @@ public class TipoClienteDao {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public TipoClienteModel findById(Integer idTipoPessoa){
-        String sql = "select * from TIPO_PESSOA where id_tipo_pessoa = ?";
-        return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(TipoClienteModel.class), idTipoPessoa);
-    }
     public TipoClienteModel findByNomeTipoPessoa(String nomeTipoPessoa) {
         String sql = "SELECT * FROM TIPO_PESSOA WHERE nome_tipo_pessoa = ?";
         return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(TipoClienteModel.class), nomeTipoPessoa);

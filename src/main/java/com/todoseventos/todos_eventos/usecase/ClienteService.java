@@ -40,16 +40,51 @@ public class ClienteService {
     private ClienteJuridicaDao clienteJuridicaDao;
 
     public ClienteResponse cadastrarNovaPessoa(ClienteRequest clienteRequest) {
+
         if (clienteRequest.getTipo_pessoa() == null) {
             throw new CustomException("Tipo de usuário inválido!");
         }
 
         TipoClienteModel tipoClienteModel = tipoClienteDao.findByNomeTipoPessoa(clienteRequest.getTipo_pessoa().name());
 
-        if (Objects.isNull(tipoClienteModel)){
+        if (Objects.isNull(tipoClienteModel)) {
             throw new CustomException("Tipo de pessoa inválido!");
         }
 
+        validarDados(clienteRequest);
+
+        clienteRequest.setTelefone(validacao.formatarNumeroTelefone(clienteRequest.getTelefone()));
+        String tokenSenha = PasswordSecurity.generateToken();
+
+        ClienteModel pessoa = ClienteModel.builder()
+                .nome(clienteRequest.getNome())
+                .email(clienteRequest.getEmail())
+                .senha(tokenSenha)
+                .telefone(clienteRequest.getTelefone())
+                .tipo_pessoa(tipoClienteModel.getIdTipoPessoa())
+                .build();
+
+        ClienteModel pessoaSalva = clienteDao.save(pessoa);
+
+        if (clienteRequest.getTipo_pessoa() == TipoClienteEnum.FISICA) {
+            ClienteFisicaModel pessoaFisica = ClienteFisicaModel.builder()
+                    .cpf(clienteRequest.getCpf())
+                    .dataNascimento(clienteRequest.getDataNascimento())
+                    .idPessoa(pessoaSalva.getIdPessoa())
+                    .build();
+            clienteFisicaDao.save(pessoaFisica);
+
+        } else if (clienteRequest.getTipo_pessoa() == TipoClienteEnum.JURIDICA) {
+            ClienteJuridicaModel pessoaJuridica = ClienteJuridicaModel.builder()
+                    .cnpj(clienteRequest.getCnpj())
+                    .idPessoa(pessoaSalva.getIdPessoa())
+                    .build();
+            clienteJuridicaDao.save(pessoaJuridica);
+        }
+        return mapearPessoa(clienteRequest.getTipo_pessoa(), pessoaSalva);
+    }
+
+    private void validarDados(ClienteRequest clienteRequest) {
         if (!validacao.validarEmail(clienteRequest.getEmail())) {
             throw new CustomException("Email inválido!");
         }
@@ -58,7 +93,6 @@ public class ClienteService {
             throw new CustomException("Número de celular inválido!");
         }
 
-        // Validar data de nascimento apenas para pessoa física
         if (clienteRequest.getTipo_pessoa() == TipoClienteEnum.FISICA &&
                 !validacao.validarDataNascimento(clienteRequest.getDataNascimento())) {
             throw new CustomException("Data de nascimento inválida!");
@@ -84,39 +118,9 @@ public class ClienteService {
                 throw new CustomException("CNPJ já cadastrado!");
             }
         }
-
-        clienteRequest.setTelefone(validacao.formatarNumeroTelefone(clienteRequest.getTelefone()));
-        String tokenSenha = PasswordSecurity.generateToken();
-
-        ClienteModel pessoa = ClienteModel.builder()
-                .nome(clienteRequest.getNome())
-                .email(clienteRequest.getEmail())
-                .senha(tokenSenha)
-                .telefone(clienteRequest.getTelefone())
-                .tipo_pessoa(tipoClienteModel.getIdTipoPessoa())
-                .build();
-
-        ClienteModel pessoaSalva = clienteDao.save(pessoa);
-
-        if (clienteRequest.getTipo_pessoa() == TipoClienteEnum.FISICA){
-            ClienteFisicaModel pessoaFisica = ClienteFisicaModel.builder()
-                    .cpf(clienteRequest.getCpf())
-                    .dataNascimento(clienteRequest.getDataNascimento())
-                    .idPessoa(pessoaSalva.getIdPessoa())
-                    .build();
-            clienteFisicaDao.save(pessoaFisica);
-
-        } else if (clienteRequest.getTipo_pessoa() == TipoClienteEnum.JURIDICA) {
-            ClienteJuridicaModel pessoaJuridica = ClienteJuridicaModel.builder()
-                    .cnpj(clienteRequest.getCnpj())
-                    .idPessoa(pessoaSalva.getIdPessoa())
-                    .build();
-            clienteJuridicaDao.save(pessoaJuridica);
-        }
-        return mapearPessoa(clienteRequest.getTipo_pessoa(), pessoaSalva);
     }
 
-    private static ClienteResponse mapearPessoa(TipoClienteEnum tipo_pessoa, ClienteModel pessoaSalva){
+    private static ClienteResponse mapearPessoa(TipoClienteEnum tipo_pessoa, ClienteModel pessoaSalva) {
         ClienteResponse.ClienteResponseBuilder builder = ClienteResponse.builder()
                 .nome(pessoaSalva.getNome())
                 .email(pessoaSalva.getEmail())
@@ -143,15 +147,14 @@ public class ClienteService {
         return mapearPessoa(TipoClienteEnum.FISICA, pessoaFisicaEncontrada);
     }
 
-    public ClienteResponse procurarPessoaPorCnpj(String cnpj){
+    public ClienteResponse procurarPessoaPorCnpj(String cnpj) {
         ClienteModel pessoaJuridicaEncontrada = clienteDao.procurarPorCnpj(cnpj);
 
-        if (Objects.isNull(pessoaJuridicaEncontrada)){
+        if (Objects.isNull(pessoaJuridicaEncontrada)) {
             throw new CustomException("CNPJ não encontrada");
         }
         return mapearPessoa(TipoClienteEnum.JURIDICA, pessoaJuridicaEncontrada);
     }
-
 
     public List<ClienteResponse> listarPessoas() {
         List<ClienteModel> pessoasEncontradas = clienteDao.listarTodasPessoas();
@@ -164,20 +167,9 @@ public class ClienteService {
         return clienteResponse;
     }
 
-    public ClienteResponse atualizarPessoa(String identificador, ClienteRequest clienteRequest){
+    public ClienteResponse atualizarPessoa(String identificador, ClienteRequest clienteRequest) {
         ClienteModel pessoaExistente;
 
-        if (!validacao.validarEmail(clienteRequest.getEmail())) {
-            throw new CustomException("Email inválido!");
-        }
-
-        if (!validacao.validarNumeroTelefone(clienteRequest.getTelefone())) {
-            throw new CustomException("Número de celular inválido!");
-        }
-
-        if (!validacao.validarDataNascimento(clienteRequest.getDataNascimento())) {
-            throw new CustomException("Data de nascimento inválida!");
-        }
 
         if (identificador.length() == 11) { // CPF
             pessoaExistente = clienteDao.procurarPorCpf(identificador);
@@ -191,7 +183,7 @@ public class ClienteService {
             throw new CustomException("Cliente não encontrado!");
         }
 
-        TipoClienteModel tipoClienteModel = tipoClienteDao.findById(pessoaExistente.getTipo_pessoa());
+        TipoClienteModel tipoClienteModel = tipoClienteDao.findByNomeTipoPessoa(clienteRequest.getTipo_pessoa().name());
 
         pessoaExistente.setNome(clienteRequest.getNome());
         pessoaExistente.setEmail(clienteRequest.getEmail());
@@ -201,10 +193,10 @@ public class ClienteService {
 
         ClienteModel clienteAtualizado = clienteDao.update(pessoaExistente);
 
-        if (clienteRequest.getTipo_pessoa() == TipoClienteEnum.FISICA){
+        if (clienteRequest.getTipo_pessoa() == TipoClienteEnum.FISICA) {
             ClienteFisicaModel pessoaFisica = clienteFisicaDao.findByCpf(identificador);
             if (pessoaFisica != null) {
-                pessoaFisica.setIdPessoa(pessoaExistente.getIdPessoa());
+                pessoaFisica.setIdPessoa(clienteAtualizado.getIdPessoa());
                 pessoaFisica.setCpf(clienteRequest.getCpf());
                 pessoaFisica.setDataNascimento(clienteRequest.getDataNascimento());
                 clienteFisicaDao.update(pessoaFisica);
@@ -212,13 +204,11 @@ public class ClienteService {
         } else if (clienteRequest.getTipo_pessoa() == TipoClienteEnum.JURIDICA) {
             ClienteJuridicaModel pessoaJuridica = clienteJuridicaDao.findByCnpj(identificador);
             if (pessoaJuridica != null) {
-                pessoaJuridica.setIdPessoa(pessoaExistente.getIdPessoa());
+                pessoaJuridica.setIdPessoa(clienteAtualizado.getIdPessoa());
                 pessoaJuridica.setCnpj(clienteRequest.getCnpj());
                 clienteJuridicaDao.update(pessoaJuridica);
             }
         }
-
-        return mapearPessoa(TipoClienteEnum.valueOf(tipoClienteModel.getNomeTipoPessoa()), clienteAtualizado);
+        return mapearPessoa(clienteRequest.getTipo_pessoa(), clienteAtualizado);
     }
 }
-

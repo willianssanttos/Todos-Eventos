@@ -200,9 +200,7 @@ public class Validacao {
         } catch (Exception e) {
 
             return false;
-
         }
-
     }
 
     public boolean validarEmail(String emial) {

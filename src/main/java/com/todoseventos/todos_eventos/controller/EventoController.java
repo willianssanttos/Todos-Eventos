@@ -1,10 +1,12 @@
 package com.todoseventos.todos_eventos.controller;
 
+import com.todoseventos.todos_eventos.dto.ApiResponse;
 import com.todoseventos.todos_eventos.dto.EventoRequest;
 import com.todoseventos.todos_eventos.dto.EventoResponse;
 import com.todoseventos.todos_eventos.usecase.EventoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,28 +17,53 @@ public class EventoController {
     @Autowired
     private EventoService eventoService;
 
-    @PostMapping
-    @RequestMapping("/api/evento")
-    @ResponseStatus(HttpStatus.CREATED)
-    public EventoResponse cadastrarEvento(@RequestBody EventoRequest eventoRequest) {
-        return eventoService.cadastrarNovoEvento(eventoRequest);
+    @PostMapping("/api/evento")
+    public ResponseEntity<ApiResponse> cadastrarEvento(@RequestBody EventoRequest eventoRequest) {
+        try {
+            EventoResponse response = eventoService.cadastrarNovoEvento(eventoRequest);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse("Evento cadastrado com sucesso!", response));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse("Erro ao cadastrar evento: " + e.getMessage(), null));
+        }
     }
 
     @GetMapping("/api/evento")
-    @ResponseStatus(HttpStatus.OK)
-    public List<EventoResponse> listarEventos() {
-        return eventoService.localizarEventos();
+    public ResponseEntity<ApiResponse> listarEventos() {
+        try {
+            List<EventoResponse> response = eventoService.localizarEventos();
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Lista de eventos recuperada com sucesso!", response));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse("Erro ao listar eventos: " + e.getMessage(), null));
+        }
     }
 
     @GetMapping("/api/evento/{nomeEvento}")
-    @ResponseStatus(HttpStatus.OK)
-    public EventoResponse procurarEventoPorNome(@PathVariable String nomeEvento) {
-        return eventoService.procurarEventoPorNome(nomeEvento);
+    public ResponseEntity<ApiResponse> procurarEventoPorNome(@PathVariable String nomeEvento) {
+        try {
+            EventoResponse response = eventoService.procurarEventoPorNome(nomeEvento);
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Evento encontrado com sucesso!", response));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse("Erro ao procurar evento: " + e.getMessage(), null));
+        }
     }
 
     @PutMapping("/api/evento/{nomeEvento}")
-    @ResponseStatus(HttpStatus.OK)
-    public EventoResponse atualizarEvento(@PathVariable String nomeEvento, @RequestBody EventoRequest eventoRequest) {
-        return eventoService.atualizarEvento(nomeEvento, eventoRequest);
+    public ResponseEntity<ApiResponse> atualizarEvento(@PathVariable String nomeEvento, @RequestBody EventoRequest eventoRequest) {
+        try {
+            EventoResponse response = eventoService.atualizarEvento(nomeEvento, eventoRequest);
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Evento atualizado com sucesso!", response));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse("Erro ao atualizar evento, nome errado,: " + e.getMessage(), null));
+        }
+    }
+
+    @DeleteMapping("/api/evento/{idEvento}")
+    public ResponseEntity<ApiResponse> excluirEvento(@PathVariable Long idEvento) {
+        try {
+            eventoService.excluirEvento(idEvento);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiResponse("Evento excluído com sucesso!", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse("Erro ao excluir evento: " + e.getMessage(), null));
+        }
     }
 }

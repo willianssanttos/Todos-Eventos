@@ -33,12 +33,30 @@ public class EventoDao {
         return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(EventoModel.class), nomeEvento);
     }
 
+    public EventoModel procurarPorId(Long idEvento) {
+        String sql = "SELECT * FROM EVENTO WHERE id_evento = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(EventoModel.class), idEvento);
+        } catch (Exception e) {
+            throw new CustomException("Erro ao buscar evento por ID: " + e.getMessage());
+        }
+    }
+
     public List<EventoModel> localizarEvento() {
         String sql = "SELECT e.*, ed.rua, ed.numero, ed.bairro, ed.cidade, ed.cep, ed.uf FROM EVENTO e JOIN ENDERECO ed ON e.id_evento = ed.id_evento";
         try {
             return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(EventoModel.class));
         } catch (Exception e) {
             throw new CustomException("Erro ao buscar eventos: " + e.getMessage());
+        }
+    }
+
+    public void deleteById(Long idEvento) {
+        String sql = "DELETE FROM EVENTO WHERE id_evento = ?";
+        try {
+            jdbcTemplate.update(sql, idEvento);
+        }catch (Exception e){
+            throw new CustomException("Erro ao excluir evento!: " + e.getMessage());
         }
     }
 }

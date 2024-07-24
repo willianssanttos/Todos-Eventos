@@ -38,4 +38,9 @@ public class EnderecoDao {
             throw new CustomException("Erro ao buscar endereço por ID: " + e.getMessage());
         }
     }
+
+    public void deleteByIdEvento(Long idEvento) {
+        String sql = "DELETE FROM ENDERECO WHERE id_evento = ?";
+        jdbcTemplate.update(sql, idEvento);
+    }
 }

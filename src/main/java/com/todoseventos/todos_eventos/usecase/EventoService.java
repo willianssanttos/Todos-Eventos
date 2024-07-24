@@ -164,4 +164,15 @@ public class EventoService {
 
         return mapearEvento(categoriaModel, eventoAtualizado, enderecoAtualizado);
     }
+
+    public void excluirEvento(Long idEvento) {
+        EventoModel eventoExistente = eventoDao.procurarPorId(idEvento);
+
+        if (eventoExistente == null) {
+            throw new CustomException("Evento não encontrado!");
+        }
+
+        enderecoDao.deleteByIdEvento(idEvento);
+        eventoDao.deleteById(idEvento);
+    }
 }

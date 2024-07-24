@@ -2,8 +2,6 @@ package com.todoseventos.todos_eventos.dto;
 
 import lombok.*;
 
-import java.sql.Timestamp;
-
 @Getter
 @Setter
 @AllArgsConstructor

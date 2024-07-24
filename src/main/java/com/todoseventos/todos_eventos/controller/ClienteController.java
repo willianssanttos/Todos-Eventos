@@ -49,10 +49,8 @@ public class ClienteController {
         return ResponseEntity.ok(new ApiResponse("Lista de cliente!", response));
     }
 
-
     @PutMapping("/api/pessoa/{identificador}")
-    public ResponseEntity<ApiResponse> putPessoa(@PathVariable("identificador") String identificador,
-                                                 @RequestBody ClienteRequest clienteRequest) {
+    public ResponseEntity<ApiResponse> putPessoa(@PathVariable("identificador") String identificador, @RequestBody ClienteRequest clienteRequest) {
         try {
             ClienteResponse response = clienteService.atualizarPessoa(identificador, clienteRequest);
             return ResponseEntity.ok(new ApiResponse("Cliente atualizado com sucesso!", response));
@@ -62,5 +60,4 @@ public class ClienteController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("Cliente não encontrado!", null));
         }
     }
-
 }
