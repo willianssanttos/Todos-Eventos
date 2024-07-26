@@ -26,6 +26,11 @@ public class ClienteDao {
         }
     }
 
+    public ClienteModel findById(Long idPessoa) {
+        String sql = "SELECT * FROM PESSOA WHERE id_pessoa = ?";
+        return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ClienteModel.class), idPessoa);
+    }
+
     public ClienteModel procurarPorCnpj(String cnpj) {
         String sql = "SELECT p.*, pj.cnpj, tp.nome_tipo_pessoa FROM PESSOA p " +
                 "LEFT JOIN PESSOA_JURIDICA pj ON p.id_pessoa = pj.id_pessoa " +

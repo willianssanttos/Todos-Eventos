@@ -4,12 +4,14 @@ import com.todoseventos.todos_eventos.dao.CategoriaDao;
 import com.todoseventos.todos_eventos.dao.EnderecoDao;
 import com.todoseventos.todos_eventos.dao.EventoDao;
 import com.todoseventos.todos_eventos.dto.CategoriaEnum;
+import com.todoseventos.todos_eventos.dto.CepResponse;
 import com.todoseventos.todos_eventos.dto.EventoRequest;
 import com.todoseventos.todos_eventos.dto.EventoResponse;
 import com.todoseventos.todos_eventos.exception.CustomException;
 import com.todoseventos.todos_eventos.model.evento.CategoriaModel;
 import com.todoseventos.todos_eventos.model.evento.EnderecoModel;
 import com.todoseventos.todos_eventos.model.evento.EventoModel;
+import com.todoseventos.todos_eventos.utils.Validacao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,12 @@ public class EventoService {
 
     @Autowired
     private EventoDao eventoDao;
+
+    @Autowired
+    private Validacao validacao;
+
+    @Autowired
+    private CepService cepService;
 
     @Autowired
     private EnderecoDao enderecoDao;
@@ -41,10 +49,23 @@ public class EventoService {
             throw new CustomException("Categoria Inválida!");
         }
 
+        // Validar o CEP
+        if (!validacao.validarCep(eventoRequest.getCep())) {
+            throw new CustomException("CEP inválido!");
+        }
+
+        // Consultar e preencher dados do CEP
+        CepResponse cepResponse = cepService.consultarCep(eventoRequest.getCep());
+        eventoRequest.setRua(cepResponse.getLogradouro());
+        eventoRequest.setBairro(cepResponse.getBairro());
+        eventoRequest.setCidade(cepResponse.getLocalidade());
+        eventoRequest.setUf(cepResponse.getUf());
+
         // Criar e salvar o evento
         EventoModel evento = EventoModel.builder()
                 .nome_evento(eventoRequest.getNome_evento())
                 .dataHora_evento(eventoRequest.getDataHora_evento())
+                .dataHora_eventofinal(eventoRequest.getDataHora_eventofinal())
                 .descricao(eventoRequest.getDescricao())
                 .id_categoria(categoriaModel.getIdCategoria())
                 .build();
@@ -72,6 +93,7 @@ public class EventoService {
                 .idEvento(eventoSalvo.getIdEvento())
                 .nome_evento(eventoSalvo.getNome_evento())
                 .dataHora_evento(eventoSalvo.getDataHora_evento())
+                .dataHora_eventofinal(eventoSalvo.getDataHora_eventofinal())
                 .descricao(eventoSalvo.getDescricao())
                 .categoria(CategoriaEnum.valueOf(categoria.getNomeCategoria()))
                 .rua(enderecoSalvo.getRua())
@@ -143,8 +165,21 @@ public class EventoService {
             throw new CustomException("Categoria inválida!");
         }
 
+        // Validar o CEP
+        if (!validacao.validarCep(eventoRequest.getCep())) {
+            throw new CustomException("CEP inválido!");
+        }
+
+        // Consultar e preencher dados do CEP
+        CepResponse cepResponse = cepService.consultarCep(eventoRequest.getCep());
+        eventoRequest.setRua(cepResponse.getLogradouro());
+        eventoRequest.setBairro(cepResponse.getBairro());
+        eventoRequest.setCidade(cepResponse.getLocalidade());
+        eventoRequest.setUf(cepResponse.getUf());
+
         eventoExistente.setNome_evento(eventoRequest.getNome_evento());
         eventoExistente.setDataHora_evento(eventoRequest.getDataHora_evento());
+        eventoExistente.setDataHora_eventofinal(eventoRequest.getDataHora_eventofinal());
         eventoExistente.setDescricao(eventoRequest.getDescricao());
         eventoExistente.setId_categoria(categoriaModel.getIdCategoria());
 

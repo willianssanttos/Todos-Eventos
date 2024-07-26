@@ -2,10 +2,10 @@ package com.todoseventos.todos_eventos.dto;
 
 public enum CategoriaEnum {
     CONFERENCIA,
-    WORKSHOPS,
-    CONCERTOS,
-    MUSICAS,
-    SEMINARIOS,
-    EXPOSICOES,
+    WORKSHOP,
+    CONCERTO,
+    MUSICA,
+    SEMINARIO,
+    EXPOSICOE,
 
 }

@@ -26,9 +26,4 @@ public class CategoriaDao {
         String sql = "SELECT * FROM CATEGORIA WHERE nome_categoria = ?";
         return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(CategoriaModel.class), nomeCategoria);
     }
-
-    public void save(CategoriaModel e) {
-        String sql = "INSERT INTO CATEGORIA (nome_categoria) VALUES (?)";
-        jdbcTemplate.update(sql, e.getNomeCategoria());
-    }
 }

@@ -254,4 +254,10 @@ public class Validacao {
 
         return matcher.matches();
     }
+
+    // Método para validar o CEP
+    public boolean validarCep(String cep) {
+        String regex = "^[0-9]{5}-[0-9]{3}$";
+        return cep.matches(regex);
+    }
 }

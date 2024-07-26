@@ -100,7 +100,7 @@ public class ClienteService {
 
         if (clienteRequest.getTipo_pessoa() == TipoClienteEnum.FISICA) {
             if (!validacao.isCpfValid(clienteRequest.getCpf())) {
-                throw new CustomException("CPF inválido!");
+                throw new CustomException("CPF inválido! Verifiquei o dado informado.");
             }
 
             ClienteModel pessoaExistente = clienteDao.procurarPorCpf(clienteRequest.getCpf());
@@ -110,7 +110,7 @@ public class ClienteService {
 
         } else if (clienteRequest.getTipo_pessoa() == TipoClienteEnum.JURIDICA) {
             if (!validacao.isCnpjValid(clienteRequest.getCnpj())) {
-                throw new CustomException("CNPJ inválido!");
+                throw new CustomException("CNPJ inválido! Verifiquei o dado informado.");
             }
 
             ClienteModel pessoaExistente = clienteDao.procurarPorCnpj(clienteRequest.getCnpj());
@@ -130,11 +130,10 @@ public class ClienteService {
                 .idPessoa(pessoaSalva.getIdPessoa());
 
         if (tipo_pessoa == TipoClienteEnum.FISICA) {
-            builder.cpf(pessoaSalva.getCpf())
-                    .dataNascimento(pessoaSalva.getDataNascimento());
-
+            builder.cpf(pessoaSalva.getCpf() != null ? pessoaSalva.getCpf() : "")
+                    .dataNascimento(pessoaSalva.getDataNascimento() != null ? pessoaSalva.getDataNascimento() : "");
         } else if (tipo_pessoa == TipoClienteEnum.JURIDICA) {
-            builder.cnpj(pessoaSalva.getCnpj());
+            builder.cnpj(pessoaSalva.getCnpj() != null ? pessoaSalva.getCnpj() : "");
         }
         return builder.build();
     }

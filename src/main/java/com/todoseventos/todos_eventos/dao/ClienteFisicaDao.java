@@ -27,7 +27,7 @@ public class ClienteFisicaDao {
 
     public ClienteFisicaModel findByCpf(String cpf) {
         try {
-            String sql = "SELECT * FROM PESSOA_FISICA WHERE cpf = ?";
+            String sql = "SELECT pf.cpf, pf.dataNascimento, p.nome, p.email FROM pessoa_fisica pf JOIN pessoa p ON pf.id_pessoa = p.id_pessoa WHERE pf.cpf = ?";
             return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ClienteFisicaModel.class), cpf);
         } catch (EmptyResultDataAccessException e) {
             return null;

@@ -6,5 +6,15 @@ spring:
     password: 123456
   application:
     name: Aplicacao REST de uma plataforma Todos Eventos
+  mail:
+      host: smtp.gmail.com
+      port: 587
+      username: willianssantos227@gmail.com
+      password: imnvylmqzvakcwnh
+      properties.mail.smtp.auth: true
+      properties.mail.smtp.starttls.enable: true
 server:
   port: '27031'
+
+
+

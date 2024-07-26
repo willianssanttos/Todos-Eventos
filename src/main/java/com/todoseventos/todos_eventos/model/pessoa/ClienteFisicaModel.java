@@ -14,9 +14,9 @@ import java.io.Serializable;
 public class ClienteFisicaModel implements Serializable {
 
     private Long idPessoa;
-
     private String cpf;
-
     private String dataNascimento;
+    private String nome;
+    private String email;
 
 }

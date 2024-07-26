@@ -14,6 +14,7 @@ import java.io.Serializable;
 public class ClienteJuridicaModel implements Serializable {
 
     private Long idPessoa;
-
     private String cnpj;
+    private String nome;
+    private String email;
 }

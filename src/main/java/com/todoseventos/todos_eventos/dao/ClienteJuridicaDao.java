@@ -27,7 +27,7 @@ public class ClienteJuridicaDao {
 
     public ClienteJuridicaModel findByCnpj(String cnpj){
         try {
-            String sql = "SELECT * FROM PESSOA_JURIDICA WHERE cnpj = ?";
+            String sql = "SELECT pj.cnpj, p.nome, p.email FROM pessoa_juridica pj JOIN pessoa p ON pj.id_pessoa = p.id_pessoa WHERE pj.cnpj = ?";
             return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ClienteJuridicaModel.class), cnpj);
         } catch (EmptyResultDataAccessException e) {
             return null;

@@ -16,15 +16,15 @@ public class EventoDao {
     private JdbcTemplate jdbcTemplate;
 
     public EventoModel save(EventoModel evento) {
-        String sql = "INSERT INTO EVENTO (nome_evento, dataHora_evento, descricao, id_categoria) VALUES (?,?,?,?) RETURNING id_evento";
-        Long idEvento = jdbcTemplate.queryForObject(sql, Long.class, evento.getNome_evento(), evento.getDataHora_evento(), evento.getDescricao(), evento.getId_categoria());
+        String sql = "INSERT INTO EVENTO (nome_evento, dataHora_evento, dataHora_eventofinal, descricao, id_categoria) VALUES (?,?,?,?,?) RETURNING id_evento";
+        Long idEvento = jdbcTemplate.queryForObject(sql, Long.class, evento.getNome_evento(), evento.getDataHora_evento(), evento.getDataHora_eventofinal(), evento.getDescricao(), evento.getId_categoria());
         evento.setIdEvento(idEvento);
         return evento;
     }
 
     public EventoModel update(EventoModel evento) {
-        String sql = "UPDATE EVENTO SET nome_evento = ?, dataHora_evento = ?, descricao = ?, id_categoria = ? WHERE id_evento = ?";
-        jdbcTemplate.update(sql, evento.getNome_evento(), evento.getDataHora_evento(), evento.getDescricao(), evento.getId_categoria(), evento.getIdEvento());
+        String sql = "UPDATE EVENTO SET nome_evento = ?, dataHora_evento = ?, dataHora_eventofinal = ?, descricao = ?, id_categoria = ? WHERE id_evento = ?";
+        jdbcTemplate.update(sql, evento.getNome_evento(), evento.getDataHora_evento(), evento.getDataHora_eventofinal(), evento.getDescricao(), evento.getId_categoria(), evento.getIdEvento());
         return evento;
     }
 
