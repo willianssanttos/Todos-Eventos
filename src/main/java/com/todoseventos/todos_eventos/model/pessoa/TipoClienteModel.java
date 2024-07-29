@@ -15,6 +15,5 @@ import java.io.Serializable;
 public class TipoClienteModel implements Serializable {
 
     private Integer idTipoPessoa;
-
     private String nomeTipoPessoa;
 }

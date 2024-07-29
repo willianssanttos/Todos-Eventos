@@ -13,7 +13,7 @@ import com.todoseventos.todos_eventos.model.pessoa.ClienteJuridicaModel;
 import com.todoseventos.todos_eventos.model.pessoa.ClienteModel;
 import com.todoseventos.todos_eventos.model.pessoa.TipoClienteModel;
 import com.todoseventos.todos_eventos.security.PasswordSecurity;
-import com.todoseventos.todos_eventos.utils.Validacao;
+import com.todoseventos.todos_eventos.utils.Validacoes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +25,7 @@ import java.util.Objects;
 public class ClienteService {
 
     @Autowired
-    private Validacao validacao;
+    private Validacoes validacoes;
 
     @Autowired
     private ClienteDao clienteDao;
@@ -42,18 +42,18 @@ public class ClienteService {
     public ClienteResponse cadastrarNovaPessoa(ClienteRequest clienteRequest) {
 
         if (clienteRequest.getTipo_pessoa() == null) {
-            throw new CustomException("Tipo de usuário inválido!");
+            throw new CustomException(CustomException.TIPO_CATEGORIA_INVALIDO);
         }
 
         TipoClienteModel tipoClienteModel = tipoClienteDao.findByNomeTipoPessoa(clienteRequest.getTipo_pessoa().name());
 
         if (Objects.isNull(tipoClienteModel)) {
-            throw new CustomException("Tipo de pessoa inválido!");
+            throw new CustomException(CustomException.CATEGORIA_INVALIDA);
         }
 
         validarDados(clienteRequest);
 
-        clienteRequest.setTelefone(validacao.formatarNumeroTelefone(clienteRequest.getTelefone()));
+        clienteRequest.setTelefone(validacoes.formatarNumeroTelefone(clienteRequest.getTelefone()));
         String tokenSenha = PasswordSecurity.generateToken();
 
         ClienteModel pessoa = ClienteModel.builder()
@@ -85,37 +85,37 @@ public class ClienteService {
     }
 
     private void validarDados(ClienteRequest clienteRequest) {
-        if (!validacao.validarEmail(clienteRequest.getEmail())) {
-            throw new CustomException("Email inválido!");
+        if (!validacoes.validarEmail(clienteRequest.getEmail())) {
+            throw new CustomException(CustomException.EMAIL_INVALIDO);
         }
 
-        if (!validacao.validarNumeroTelefone(clienteRequest.getTelefone())) {
-            throw new CustomException("Número de celular inválido!");
+        if (!validacoes.validarNumeroTelefone(clienteRequest.getTelefone())) {
+            throw new CustomException(CustomException.TELEFONE_INVALIDO);
         }
 
         if (clienteRequest.getTipo_pessoa() == TipoClienteEnum.FISICA &&
-                !validacao.validarDataNascimento(clienteRequest.getDataNascimento())) {
-            throw new CustomException("Data de nascimento inválida!");
+                !validacoes.validarDataNascimento(clienteRequest.getDataNascimento())) {
+            throw new CustomException(CustomException.DATA_NASCIMENTO_INVALIDA);
         }
 
         if (clienteRequest.getTipo_pessoa() == TipoClienteEnum.FISICA) {
-            if (!validacao.isCpfValid(clienteRequest.getCpf())) {
-                throw new CustomException("CPF inválido! Verifiquei o dado informado.");
+            if (!validacoes.isCpfValid(clienteRequest.getCpf())) {
+                throw new CustomException(CustomException.CPF_INVALIDO);
             }
 
             ClienteModel pessoaExistente = clienteDao.procurarPorCpf(clienteRequest.getCpf());
             if (pessoaExistente != null) {
-                throw new CustomException("CPF já cadastrado!");
+                throw new CustomException(CustomException.CPF_JA_CADASTRADO);
             }
 
         } else if (clienteRequest.getTipo_pessoa() == TipoClienteEnum.JURIDICA) {
-            if (!validacao.isCnpjValid(clienteRequest.getCnpj())) {
-                throw new CustomException("CNPJ inválido! Verifiquei o dado informado.");
+            if (!validacoes.isCnpjValid(clienteRequest.getCnpj())) {
+                throw new CustomException(CustomException.CNPJ_INVALIDO);
             }
 
             ClienteModel pessoaExistente = clienteDao.procurarPorCnpj(clienteRequest.getCnpj());
             if (pessoaExistente != null) {
-                throw new CustomException("CNPJ já cadastrado!");
+                throw new CustomException(CustomException.CNPJ_JA_CADASTRADO);
             }
         }
     }
@@ -141,7 +141,7 @@ public class ClienteService {
     public ClienteResponse procurarPessoaPorCpf(String cpf) {
         ClienteModel pessoaFisicaEncontrada = clienteDao.procurarPorCpf(cpf);
         if (Objects.isNull(pessoaFisicaEncontrada)) {
-            throw new CustomException("CPF não encontrado!");
+            throw new CustomException(CustomException.CPF_INVALIDO);
         }
         return mapearPessoa(TipoClienteEnum.FISICA, pessoaFisicaEncontrada);
     }
@@ -150,7 +150,7 @@ public class ClienteService {
         ClienteModel pessoaJuridicaEncontrada = clienteDao.procurarPorCnpj(cnpj);
 
         if (Objects.isNull(pessoaJuridicaEncontrada)) {
-            throw new CustomException("CNPJ não encontrada");
+            throw new CustomException(CustomException.CNPJ_JA_CADASTRADO);
         }
         return mapearPessoa(TipoClienteEnum.JURIDICA, pessoaJuridicaEncontrada);
     }
@@ -175,11 +175,11 @@ public class ClienteService {
         } else if (identificador.length() == 14) { // CNPJ
             pessoaExistente = clienteDao.procurarPorCnpj(identificador);
         } else {
-            throw new CustomException("Identificador inválido!");
+            throw new CustomException(CustomException.IDENTIFICADOR_INVALIDO);
         }
 
         if (Objects.isNull(pessoaExistente)) {
-            throw new CustomException("Cliente não encontrado!");
+            throw new CustomException(CustomException.CLIENTE_NAO_ENCONTRADO);
         }
 
         TipoClienteModel tipoClienteModel = tipoClienteDao.findByNomeTipoPessoa(clienteRequest.getTipo_pessoa().name());

@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
-public class Validacao {
+public class Validacoes {
 
     public boolean isCpfValid(String cpf) {
 

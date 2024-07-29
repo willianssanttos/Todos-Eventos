@@ -29,7 +29,7 @@ public class CepService {
 
             return new Gson().fromJson(jsonCep.toString(), CepResponse.class);
         } catch (Exception e) {
-            throw new CustomException("Erro ao consultar CEP: " + e.getMessage());
+            throw new CustomException(CustomException.ERRO_BUSCAR_ENDERECO_EVENTO + e.getMessage());
         }
     }
 }

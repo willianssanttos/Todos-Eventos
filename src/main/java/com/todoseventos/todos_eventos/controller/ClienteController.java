@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -17,11 +16,18 @@ public class ClienteController {
 
     @Autowired
     private ClienteService clienteService;
+
     @PostMapping
     @RequestMapping("/api/pessoa")
     public ResponseEntity<ApiResponse> postPessoa(@RequestBody ClienteRequest clienteRequest) {
-        ClienteResponse response = clienteService.cadastrarNovaPessoa(clienteRequest);
-        return ResponseEntity.ok(new ApiResponse("Cadastro realizado com sucesso!", null));
+        try {
+            ClienteResponse response = clienteService.cadastrarNovaPessoa(clienteRequest);
+            return ResponseEntity.ok(new ApiResponse("Cadastro realizado com sucesso!", response));
+        } catch (CustomException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("Erro interno ao realizar cadastro", null));
+        }
     }
 
     @GetMapping("/api/pessoa/{identificador}")
@@ -33,20 +39,24 @@ public class ClienteController {
             } else if (identificador.length() == 14) { // Assumindo que CNPJ tem 14 dígitos
                 pessoa = clienteService.procurarPessoaPorCnpj(identificador);
             } else {
-                throw new CustomException("Identificador inválido!");
+                throw new CustomException(CustomException.IDENTIFICADOR_INVALIDO);
             }
-            return ResponseEntity.ok(new ApiResponse("Cliente encontrado!",pessoa));
+            return ResponseEntity.ok(new ApiResponse("Cliente encontrado!", pessoa));
         } catch (CustomException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(e.getMessage(),null));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(e.getMessage(), null));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("Cadastro não localizado", null));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("Erro interno ao buscar cliente", null));
         }
     }
 
     @GetMapping("/api/pessoa")
     public ResponseEntity<ApiResponse> getPessoa() {
-        List<ClienteResponse> response = clienteService.listarPessoas();
-        return ResponseEntity.ok(new ApiResponse("Lista de cliente!", response));
+        try {
+            List<ClienteResponse> response = clienteService.listarPessoas();
+            return ResponseEntity.ok(new ApiResponse("Lista de clientes recuperada com sucesso!", response));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("Erro interno ao listar clientes", null));
+        }
     }
 
     @PutMapping("/api/pessoa/{identificador}")
@@ -57,7 +67,7 @@ public class ClienteController {
         } catch (CustomException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(e.getMessage(), null));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("Cliente não encontrado!", null));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("Erro interno ao atualizar cliente", null));
         }
     }
 }

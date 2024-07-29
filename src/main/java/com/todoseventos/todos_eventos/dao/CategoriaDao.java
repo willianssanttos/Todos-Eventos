@@ -24,6 +24,10 @@ public class CategoriaDao {
 
     public CategoriaModel findNomeCategoria(String nomeCategoria) {
         String sql = "SELECT * FROM CATEGORIA WHERE nome_categoria = ?";
-        return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(CategoriaModel.class), nomeCategoria);
+        try {
+            return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(CategoriaModel.class), nomeCategoria);
+        } catch (Exception e) {
+            throw new CustomException("Erro ao buscar categoria por nome: " + e.getMessage());
+        }
     }
 }

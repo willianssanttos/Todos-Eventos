@@ -1,11 +1,11 @@
 package com.todoseventos.todos_eventos.dao;
 
+import com.todoseventos.todos_eventos.exception.CustomException;
 import com.todoseventos.todos_eventos.model.pessoa.ClienteModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
 @Repository
@@ -22,7 +22,7 @@ public class ClienteDao {
         try {
             return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ClienteModel.class), cpf);
         } catch (Exception e) {
-            return null;
+            throw new CustomException("Erro ao buscar cliente por CPF: " + e.getMessage());
         }
     }
 
@@ -34,21 +34,29 @@ public class ClienteDao {
         try {
             return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ClienteModel.class), cnpj);
         } catch (Exception e) {
-            return null;
+            throw new CustomException("Erro ao buscar cliente por CNPJ: " + e.getMessage());
         }
     }
 
     public ClienteModel save(ClienteModel pessoa) {
         String sql = "INSERT INTO PESSOA (nome, email, senha, telefone, id_tipo_pessoa) VALUES (?,?,?,?,?) RETURNING id_pessoa";
-        Long idPessoa = jdbcTemplate.queryForObject(sql, new Object[]{pessoa.getNome(), pessoa.getEmail(), pessoa.getSenha(), pessoa.getTelefone(), pessoa.getTipo_pessoa()}, Long.class);
-        pessoa.setIdPessoa(idPessoa);
-        return pessoa;
+        try {
+            Long idPessoa = jdbcTemplate.queryForObject(sql, new Object[]{pessoa.getNome(), pessoa.getEmail(), pessoa.getSenha(), pessoa.getTelefone(), pessoa.getTipo_pessoa()}, Long.class);
+            pessoa.setIdPessoa(idPessoa);
+            return pessoa;
+        } catch (Exception e) {
+            throw new CustomException("Erro ao salvar cliente: " + e.getMessage());
+        }
     }
 
     public ClienteModel update(ClienteModel pessoa) {
         String sql = "UPDATE PESSOA SET nome = ?, email = ?, senha = ?, telefone = ?, id_tipo_pessoa = ? WHERE id_pessoa = ?";
-        jdbcTemplate.update(sql, pessoa.getNome(), pessoa.getEmail(), pessoa.getSenha(), pessoa.getTelefone(), pessoa.getTipo_pessoa(), pessoa.getIdPessoa());
-        return pessoa;
+        try {
+            jdbcTemplate.update(sql, pessoa.getNome(), pessoa.getEmail(), pessoa.getSenha(), pessoa.getTelefone(), pessoa.getTipo_pessoa(), pessoa.getIdPessoa());
+            return pessoa;
+        } catch (Exception e) {
+            throw new CustomException("Erro ao atualizar cliente: " + e.getMessage());
+        }
     }
 
     public List<ClienteModel> listarTodasPessoas() {
@@ -57,7 +65,10 @@ public class ClienteDao {
                 "LEFT JOIN tipo_pessoa tp ON p.id_tipo_pessoa = tp.id_tipo_pessoa " +
                 "LEFT JOIN pessoa_fisica pf ON p.id_pessoa = pf.id_pessoa " +
                 "LEFT JOIN pessoa_juridica pj ON p.id_pessoa = pj.id_pessoa";
-
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(ClienteModel.class));
+        try {
+            return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(ClienteModel.class));
+        } catch (Exception e) {
+            throw new CustomException("Erro ao listar todas as pessoas: " + e.getMessage());
+        }
     }
 }

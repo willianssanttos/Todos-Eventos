@@ -12,7 +12,7 @@ import com.todoseventos.todos_eventos.model.evento.EventoModel;
 import com.todoseventos.todos_eventos.model.evento.ParticipacaoModel;
 import com.todoseventos.todos_eventos.model.pessoa.ClienteFisicaModel;
 import com.todoseventos.todos_eventos.model.pessoa.ClienteJuridicaModel;
-import com.todoseventos.todos_eventos.utils.Validacao;
+import com.todoseventos.todos_eventos.utils.Validacoes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +27,7 @@ public class EventoService {
     private EventoDao eventoDao;
 
     @Autowired
-    private Validacao validacao;
+    private Validacoes validacoes;
 
     @Autowired
     private EmailService emailService;
@@ -53,18 +53,18 @@ public class EventoService {
     public EventoResponse cadastrarNovoEvento(EventoRequest eventoRequest) {
 
         if (eventoRequest.getCategoria() == null) {
-            throw new CustomException("Tipo de categoria inválido!");
+            throw new CustomException(CustomException.TIPO_CATEGORIA_INVALIDO);
         }
         // Verificar se a categoria é válida
         CategoriaModel categoriaModel = categoriaDao.findNomeCategoria(eventoRequest.getCategoria().name());
 
         if (Objects.isNull(categoriaModel)) {
-            throw new CustomException("Categoria Inválida!");
+            throw new CustomException(CustomException.CATEGORIA_INVALIDA);
         }
 
         // Validar o CEP
-        if (!validacao.validarCep(eventoRequest.getCep())) {
-            throw new CustomException("CEP inválido!");
+        if (!validacoes.validarCep(eventoRequest.getCep())) {
+            throw new CustomException(CustomException.CEP_INVALIDO);
         }
 
         // Consultar e preencher dados do CEP
@@ -105,7 +105,7 @@ public class EventoService {
     public EventoResponse encerrarEvento(Long idEvento) {
         EventoModel evento = eventoDao.procurarPorId(idEvento);
         if (Objects.isNull(evento)) {
-            throw new CustomException("Evento não encontrado!");
+            throw new CustomException(CustomException.EVENTO_NAO_ENCONTRADO);
         }
 
         evento.setStatus("CANCELADO");
@@ -133,7 +133,7 @@ public class EventoService {
     private EventoResponse mapearEvento(EventoModel evento) {
         CategoriaModel categoria = categoriaDao.findById(evento.getId_categoria());
         EnderecoModel endereco = enderecoDao.procurarPorIdEvento(evento.getIdEvento())
-                .orElseThrow(() -> new CustomException("Endereço não encontrado para o evento: " + evento.getNome_evento()));
+                .orElseThrow(() -> new CustomException(CustomException.ENDERECO_NAO_ENCONTRADO + evento.getNome_evento()));
 
         return EventoResponse.builder()
                 .idEvento(evento.getIdEvento())
@@ -170,7 +170,6 @@ public class EventoService {
                 .build();
     }
 
-
     public List<EventoResponse> localizarEventos() {
         List<EventoModel> eventoModelList;
         List<EventoResponse> eventoResponseList = new ArrayList<>();
@@ -178,7 +177,7 @@ public class EventoService {
         try {
             eventoModelList = eventoDao.localizarEvento();
         } catch (Exception e) {
-            throw new CustomException("Erro ao buscar eventos: " + e.getMessage());
+            throw new CustomException(CustomException.ERRO_BUSCAR_EVENTOS + e.getMessage());
         }
 
         for (EventoModel eventoModel : eventoModelList) {
@@ -188,14 +187,14 @@ public class EventoService {
             try {
                 categoriaModel = categoriaDao.findById(eventoModel.getId_categoria());
             } catch (Exception e) {
-                throw new CustomException("Erro ao buscar categoria do evento: " + e.getMessage());
+                throw new CustomException(CustomException.ERRO_BUSCAR_CATEGORIA_EVENTO + e.getMessage());
             }
 
             try {
                 enderecoModel = enderecoDao.procurarPorIdEvento(eventoModel.getIdEvento())
-                        .orElseThrow(() -> new CustomException("Endereço não encontrado para o evento: " + eventoModel.getNome_evento()));
+                        .orElseThrow(() -> new CustomException(CustomException.ENDERECO_NAO_ENCONTRADO + eventoModel.getNome_evento()));
             } catch (Exception e) {
-                throw new CustomException("Erro ao buscar endereço do evento: " + e.getMessage());
+                throw new CustomException(CustomException.ERRO_BUSCAR_ENDERECO_EVENTO + e.getMessage());
             }
 
             EventoResponse eventoResponse = mapearEvento(categoriaModel, eventoModel, enderecoModel);
@@ -208,12 +207,12 @@ public class EventoService {
         EventoModel eventoModel = eventoDao.procurarPorNome(nomeEvento);
 
         if (eventoModel == null) {
-            throw new CustomException("Evento não encontrado!");
+            throw new CustomException(CustomException.EVENTO_NAO_ENCONTRADO);
         }
 
         CategoriaModel categoriaModel = categoriaDao.findById(eventoModel.getId_categoria());
         EnderecoModel enderecoModel = enderecoDao.procurarPorIdEvento(eventoModel.getIdEvento())
-                .orElseThrow(() -> new CustomException("Endereço não encontrado para o evento: " + nomeEvento));
+                .orElseThrow(() -> new CustomException(CustomException.ENDERECO_NAO_ENCONTRADO + nomeEvento));
 
         return mapearEvento(categoriaModel, eventoModel, enderecoModel);
     }
@@ -222,18 +221,18 @@ public class EventoService {
         EventoModel eventoExistente = eventoDao.procurarPorNome(nomeEvento);
 
         if (eventoExistente == null) {
-            throw new CustomException("Evento não encontrado!");
+            throw new CustomException(CustomException.EVENTO_NAO_ENCONTRADO);
         }
 
         CategoriaModel categoriaModel = categoriaDao.findNomeCategoria(eventoRequest.getCategoria().name());
 
         if (categoriaModel == null) {
-            throw new CustomException("Categoria inválida!");
+            throw new CustomException(CustomException.CATEGORIA_INVALIDA);
         }
 
         // Validar o CEP
-        if (!validacao.validarCep(eventoRequest.getCep())) {
-            throw new CustomException("CEP inválido!");
+        if (!validacoes.validarCep(eventoRequest.getCep())) {
+            throw new CustomException(CustomException.CEP_INVALIDO);
         }
 
         // Consultar e preencher dados do CEP
@@ -252,7 +251,7 @@ public class EventoService {
         EventoModel eventoAtualizado = eventoDao.update(eventoExistente);
 
         EnderecoModel enderecoExistente = enderecoDao.procurarPorIdEvento(eventoExistente.getIdEvento())
-                .orElseThrow(() -> new CustomException("Endereço não encontrado para o evento: " + nomeEvento));
+                .orElseThrow(() -> new CustomException(CustomException.ENDERECO_NAO_ENCONTRADO + nomeEvento));
 
         enderecoExistente.setRua(eventoRequest.getRua());
         enderecoExistente.setNumero(eventoRequest.getNumero());
@@ -270,7 +269,7 @@ public class EventoService {
         EventoModel eventoExistente = eventoDao.procurarPorId(idEvento);
 
         if (eventoExistente == null) {
-            throw new CustomException("Evento não encontrado!");
+            throw new CustomException(CustomException.EVENTO_NAO_ENCONTRADO);
         }
 
         enderecoDao.deleteByIdEvento(idEvento);

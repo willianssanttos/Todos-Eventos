@@ -1,7 +1,7 @@
 package com.todoseventos.todos_eventos.dao;
 
+import com.todoseventos.todos_eventos.exception.CustomException;
 import com.todoseventos.todos_eventos.model.evento.ParticipacaoModel;
-import com.todoseventos.todos_eventos.model.pessoa.ClienteJuridicaModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +9,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
-
 
 public interface ParticipacaoDao {
     ParticipacaoModel save(ParticipacaoModel participacao);
@@ -32,19 +30,27 @@ class ParticipacaoDaoImpl implements ParticipacaoDao {
     public ParticipacaoModel save(ParticipacaoModel participacao) {
         String sql = "INSERT INTO PARTICIPACAO (cpf, cnpj, id_evento, status) VALUES (?,?,?,?) RETURNING id_participacao";
         logger.info("Executando SQL para salvar participação: {}", sql);
-        Long idParticipacao = jdbcTemplate.queryForObject(sql, Long.class, participacao.getCpf(), participacao.getCnpj(), participacao.getIdEvento(), participacao.getStatus());
-        participacao.setIdParticipacao(idParticipacao);
-        logger.info("Participação salva com ID: {}", idParticipacao);
-        return participacao;
+        try {
+            Long idParticipacao = jdbcTemplate.queryForObject(sql, Long.class, participacao.getCpf(), participacao.getCnpj(), participacao.getIdEvento(), participacao.getStatus());
+            participacao.setIdParticipacao(idParticipacao);
+            logger.info("Participação salva com ID: {}", idParticipacao);
+            return participacao;
+        } catch (Exception e) {
+            throw new CustomException("Erro ao salvar participação: " + e.getMessage());
+        }
     }
 
     @Override
     public ParticipacaoModel update(ParticipacaoModel participacao) {
         String sql = "UPDATE PARTICIPACAO SET status = ? WHERE id_participacao = ?";
         logger.info("Executando SQL para atualizar participação: {}", sql);
-        jdbcTemplate.update(sql, participacao.getStatus(), participacao.getIdParticipacao());
-        logger.info("Participação atualizada com ID: {}", participacao.getIdParticipacao());
-        return participacao;
+        try {
+            jdbcTemplate.update(sql, participacao.getStatus(), participacao.getIdParticipacao());
+            logger.info("Participação atualizada com ID: {}", participacao.getIdParticipacao());
+            return participacao;
+        } catch (Exception e) {
+            throw new CustomException("Erro ao atualizar participação: " + e.getMessage());
+        }
     }
 
     @Override
@@ -56,11 +62,18 @@ class ParticipacaoDaoImpl implements ParticipacaoDao {
         } catch (EmptyResultDataAccessException e) {
             logger.warn("Nenhuma participação encontrada com ID: {}", idParticipacao);
             return null;
+        } catch (Exception e) {
+            throw new CustomException("Erro ao buscar participação por ID: " + e.getMessage());
         }
     }
+
     @Override
     public List<ParticipacaoModel> findByIdEvento(Long idEvento) {
         String sql = "SELECT * FROM PARTICIPACAO WHERE id_evento = ?";
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(ParticipacaoModel.class), idEvento);
+        try {
+            return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(ParticipacaoModel.class), idEvento);
+        } catch (Exception e) {
+            throw new CustomException("Erro ao buscar participações por ID do evento: " + e.getMessage());
+        }
     }
 }

@@ -17,7 +17,7 @@ public class EventoModel implements Serializable {
     private Long idEvento;
     private String nome_evento;
     private String dataHora_evento;
-    private String dataHora_eventofinal; // Adicionando o novo campo
+    private String dataHora_eventofinal;
     private String descricao;
     private String status;
     private Integer id_categoria;

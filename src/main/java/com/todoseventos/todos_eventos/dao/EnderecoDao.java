@@ -25,15 +25,23 @@ class EnderecoDaoImpl implements EnderecoDao {
 
     public EnderecoModel save(EnderecoModel endereco) {
         String sql = "INSERT INTO ENDERECO (rua, numero, bairro, cidade, uf, cep, id_evento) VALUES (?,?,?,?,?,?,?)";
-        jdbcTemplate.update(sql, endereco.getRua(), endereco.getNumero(), endereco.getBairro(), endereco.getCidade(), endereco.getUf(), endereco.getCep(), endereco.getIdEvento());
-        return endereco;
+        try {
+            jdbcTemplate.update(sql, endereco.getRua(), endereco.getNumero(), endereco.getBairro(), endereco.getCidade(), endereco.getUf(), endereco.getCep(), endereco.getIdEvento());
+            return endereco;
+        } catch (Exception e) {
+            throw new CustomException("Erro ao salvar endereço: " + e.getMessage());
+        }
     }
 
     @Override
     public EnderecoModel update(EnderecoModel endereco) {
         String sql = "UPDATE ENDERECO SET rua = ?, numero = ?, bairro = ?, cidade = ?, uf = ?, cep = ? WHERE id_evento = ?";
-        jdbcTemplate.update(sql, endereco.getRua(), endereco.getNumero(), endereco.getBairro(), endereco.getCidade(), endereco.getUf(), endereco.getCep(), endereco.getIdEvento());
-        return endereco;
+        try {
+            jdbcTemplate.update(sql, endereco.getRua(), endereco.getNumero(), endereco.getBairro(), endereco.getCidade(), endereco.getUf(), endereco.getCep(), endereco.getIdEvento());
+            return endereco;
+        } catch (Exception e) {
+            throw new CustomException("Erro ao atualizar endereço: " + e.getMessage());
+        }
     }
 
     @Override
@@ -51,6 +59,10 @@ class EnderecoDaoImpl implements EnderecoDao {
     @Override
     public void deleteByIdEvento(Long idEvento) {
         String sql = "DELETE FROM ENDERECO WHERE id_evento = ?";
-        jdbcTemplate.update(sql, idEvento);
+        try {
+            jdbcTemplate.update(sql, idEvento);
+        } catch (Exception e) {
+            throw new CustomException("Erro ao deletar endereço: " + e.getMessage());
+        }
     }
 }

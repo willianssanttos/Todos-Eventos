@@ -14,6 +14,5 @@ import java.io.Serializable;
 public class CategoriaModel implements Serializable {
 
     private Integer idCategoria;
-
     private String nomeCategoria;
 }

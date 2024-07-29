@@ -44,16 +44,16 @@ public class ParticipacaoService {
 
         EventoModel evento = eventoDao.procurarPorId(request.getIdEvento());
         if (Objects.isNull(evento)) {
-            throw new CustomException("Evento não encontrado!");
+            throw new CustomException(CustomException.EVENTO_NAO_ENCONTRADO);
         }
 
         EnderecoModel endereco = enderecoDao.procurarPorIdEvento(evento.getIdEvento())
-                .orElseThrow(() -> new CustomException("Endereço não encontrado para o evento: " + evento.getNome_evento()));
+                .orElseThrow(() -> new CustomException(CustomException.ENDERECO_NAO_ENCONTRADO + evento.getNome_evento()));
 
         if (request.getCpf() != null) {
             ClienteFisicaModel pessoaFisica = clienteFisicaDao.findByCpf(request.getCpf());
             if (Objects.isNull(pessoaFisica)) {
-                throw new CustomException("Pessoa Física não encontrada!");
+                throw new CustomException(CustomException.PESSOA_FISICA_NAO_ENCONTRADA);
             }
             ParticipacaoModel participacao = ParticipacaoModel.builder()
                     .cpf(request.getCpf())
@@ -70,7 +70,7 @@ public class ParticipacaoService {
         } else if (request.getCnpj() != null) {
             ClienteJuridicaModel pessoaJuridica = clienteJuridicaDao.findByCnpj(request.getCnpj());
             if (Objects.isNull(pessoaJuridica)) {
-                throw new CustomException("Pessoa Jurídica não encontrada!");
+                throw new CustomException(CustomException.PESSOA_JURIDICA_NAO_ENCONTRADA);
             }
             ParticipacaoModel participacao = ParticipacaoModel.builder()
                     .cnpj(request.getCnpj())
@@ -87,7 +87,7 @@ public class ParticipacaoService {
             emailService.enviarEmail(pessoaJuridica.getEmail(), "Inscrição Confirmada", pessoaJuridica.getNome(), evento.getNome_evento(), evento.getDataHora_evento(), localEvento, linkConfirmacao);
             return PessoaJuridica(savedParticipacao, pessoaJuridica, evento, endereco);
         } else {
-            throw new CustomException("CPF ou CNPJ devem ser informados!");
+            throw new CustomException(CustomException.CPF_OU_CNPJ_NAO_INFORMADOS);
         }
     }
 
@@ -95,7 +95,7 @@ public class ParticipacaoService {
         logger.info("Confirmando participação com ID: {}", idParticipacao);
         ParticipacaoModel participacao = participacaoDao.findById(idParticipacao);
         if (Objects.isNull(participacao)) {
-            throw new CustomException("Participação não encontrada!");
+            throw new CustomException(CustomException.PARTICIPACAO_NAO_ENCONTRADA);
         }
 
         participacao.setStatus("CONFIRMADO");
@@ -104,7 +104,7 @@ public class ParticipacaoService {
 
         EventoModel evento = eventoDao.procurarPorId(updatedParticipacao.getIdEvento());
         EnderecoModel endereco = enderecoDao.procurarPorIdEvento(evento.getIdEvento())
-                .orElseThrow(() -> new CustomException("Endereço não encontrado para o evento: " + evento.getNome_evento()));
+                .orElseThrow(() -> new CustomException(CustomException.ENDERECO_NAO_ENCONTRADO + evento.getNome_evento()));
 
         if (updatedParticipacao.getCpf() != null) {
             ClienteFisicaModel pessoaFisica = clienteFisicaDao.findByCpf(updatedParticipacao.getCpf());
