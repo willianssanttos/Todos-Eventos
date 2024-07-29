@@ -15,6 +15,7 @@ public class ParticipacaoModel {
     private String cnpj;
     private Long idEvento;
     private String status;
+
 }
 
 

@@ -10,8 +10,15 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+public interface EnderecoDao {
+    EnderecoModel save(EnderecoModel endereco);
+    EnderecoModel update(EnderecoModel endereco);
+    Optional<EnderecoModel> procurarPorIdEvento(Long id);
+    void deleteByIdEvento(Long idEvento);
+}
+
 @Repository
-public class EnderecoDao {
+class EnderecoDaoImpl implements EnderecoDao {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -22,12 +29,14 @@ public class EnderecoDao {
         return endereco;
     }
 
+    @Override
     public EnderecoModel update(EnderecoModel endereco) {
         String sql = "UPDATE ENDERECO SET rua = ?, numero = ?, bairro = ?, cidade = ?, uf = ?, cep = ? WHERE id_evento = ?";
         jdbcTemplate.update(sql, endereco.getRua(), endereco.getNumero(), endereco.getBairro(), endereco.getCidade(), endereco.getUf(), endereco.getCep(), endereco.getIdEvento());
         return endereco;
     }
 
+    @Override
     public Optional<EnderecoModel> procurarPorIdEvento(Long id) {
         String sql = "SELECT * FROM ENDERECO WHERE id_evento = ?";
         try {
@@ -39,6 +48,7 @@ public class EnderecoDao {
         }
     }
 
+    @Override
     public void deleteByIdEvento(Long idEvento) {
         String sql = "DELETE FROM ENDERECO WHERE id_evento = ?";
         jdbcTemplate.update(sql, idEvento);

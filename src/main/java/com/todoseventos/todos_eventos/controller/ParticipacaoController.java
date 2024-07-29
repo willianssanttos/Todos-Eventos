@@ -9,16 +9,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/api/participacao")
 public class ParticipacaoController {
 
     @Autowired
     private ParticipacaoService participacaoService;
 
     @PostMapping
+    @RequestMapping("/api/participacao")
     public ResponseEntity<ApiResponse> inscreverParticipante(@RequestBody ParticipacaoRequest request) {
         try {
             ParticipacaoResponse response = participacaoService.inscreverParticipante(request);
@@ -28,23 +26,13 @@ public class ParticipacaoController {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<ApiResponse> listarParticipacoes() {
+    @GetMapping("/api/confirmacao/{idParticipacao}")
+    public ResponseEntity<ApiResponse> confirmarParticipacao(@PathVariable Long idParticipacao) {
         try {
-            List<ParticipacaoResponse> response = participacaoService.listarParticipacoes();
-            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Lista de participações recuperada com sucesso!", response));
+            ParticipacaoResponse response = participacaoService.confirmarParticipacao(idParticipacao);
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Participação confirmada com sucesso!", response));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse("Erro ao listar participações: " + e.getMessage(), null));
-        }
-    }
-
-    @PutMapping("/{idParticipacao}")
-    public ResponseEntity<ApiResponse> atualizarStatusParticipacao(@PathVariable Long idParticipacao, @RequestParam String status) {
-        try {
-            ParticipacaoResponse response = participacaoService.atualizarStatusParticipacao(idParticipacao, status);
-            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Status de participação atualizado com sucesso!", response));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse("Erro ao atualizar status de participação: " + e.getMessage(), null));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse("Erro ao confirmar participação: " + e.getMessage(), null));
         }
     }
 }

@@ -1,5 +1,10 @@
 package com.todoseventos.todos_eventos.dto;
 
+import com.todoseventos.todos_eventos.model.evento.EnderecoModel;
+import com.todoseventos.todos_eventos.model.evento.EventoModel;
+import com.todoseventos.todos_eventos.model.evento.ParticipacaoModel;
+import com.todoseventos.todos_eventos.model.pessoa.ClienteFisicaModel;
+import com.todoseventos.todos_eventos.model.pessoa.ClienteJuridicaModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 public class ParticipacaoResponse {
-    private Long idParticipacao;
+
     private String nomePessoa;
     private String emailPessoa;
     private String cpfPessoa;
@@ -19,4 +24,6 @@ public class ParticipacaoResponse {
     private String dataHoraEvento;
     private String dataHoraEventoFinal;
     private String status;
+    private String localEvento;
+
 }
