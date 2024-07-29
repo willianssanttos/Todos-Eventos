@@ -14,6 +14,7 @@ public class EventoResponse {
     private String dataHora_evento;
     private String dataHora_eventofinal; // Adicionando o novo campo
     private String descricao;
+    private String status;
     private CategoriaEnum categoria;
     private String rua;
     private String numero;

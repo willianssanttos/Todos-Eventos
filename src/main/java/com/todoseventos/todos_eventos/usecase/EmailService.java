@@ -70,4 +70,30 @@ public class EmailService {
                 "</body>" +
                 "</html>";
     }
+
+    public void enviarEmailCancelamento(String destinatario, String nomePessoa, String nomeEvento) {
+        MimeMessage mimeMessage = emailSender.createMimeMessage();
+
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+            helper.setTo(destinatario);
+            helper.setSubject("Evento Cancelado: " + nomeEvento);
+            helper.setText(gerarCorpoEmailCancelamento(nomePessoa, nomeEvento), true);
+
+            emailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Erro ao enviar email de cancelamento", e);
+        }
+    }
+
+    private String gerarCorpoEmailCancelamento(String nomePessoa, String nomeEvento) {
+        return "<html>" +
+                "<body>" +
+                "<h1>Evento Cancelado</h1>" +
+                "<p>Olá, " + nomePessoa + ",</p>" +
+                "<p>Informamos que o evento, " + nomeEvento + ", foi cancelado pelo produtor.</p>" +
+                "<p>Pedimos desculpas pelo inconveniente.</p>" +
+                "</body>" +
+                "</html>";
+    }
 }

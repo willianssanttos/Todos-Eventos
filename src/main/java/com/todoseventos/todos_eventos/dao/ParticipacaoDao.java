@@ -17,6 +17,8 @@ public interface ParticipacaoDao {
     ParticipacaoModel save(ParticipacaoModel participacao);
     ParticipacaoModel update(ParticipacaoModel participacao);
     ParticipacaoModel findById(Long idParticipacao);
+
+    List<ParticipacaoModel> findByIdEvento(Long idEvento);
 }
 
 @Repository
@@ -55,5 +57,10 @@ class ParticipacaoDaoImpl implements ParticipacaoDao {
             logger.warn("Nenhuma participação encontrada com ID: {}", idParticipacao);
             return null;
         }
+    }
+    @Override
+    public List<ParticipacaoModel> findByIdEvento(Long idEvento) {
+        String sql = "SELECT * FROM PARTICIPACAO WHERE id_evento = ?";
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(ParticipacaoModel.class), idEvento);
     }
 }

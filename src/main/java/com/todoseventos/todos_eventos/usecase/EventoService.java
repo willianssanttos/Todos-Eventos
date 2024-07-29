@@ -1,8 +1,6 @@
 package com.todoseventos.todos_eventos.usecase;
 
-import com.todoseventos.todos_eventos.dao.CategoriaDao;
-import com.todoseventos.todos_eventos.dao.EnderecoDao;
-import com.todoseventos.todos_eventos.dao.EventoDao;
+import com.todoseventos.todos_eventos.dao.*;
 import com.todoseventos.todos_eventos.dto.CategoriaEnum;
 import com.todoseventos.todos_eventos.dto.CepResponse;
 import com.todoseventos.todos_eventos.dto.EventoRequest;
@@ -11,6 +9,9 @@ import com.todoseventos.todos_eventos.exception.CustomException;
 import com.todoseventos.todos_eventos.model.evento.CategoriaModel;
 import com.todoseventos.todos_eventos.model.evento.EnderecoModel;
 import com.todoseventos.todos_eventos.model.evento.EventoModel;
+import com.todoseventos.todos_eventos.model.evento.ParticipacaoModel;
+import com.todoseventos.todos_eventos.model.pessoa.ClienteFisicaModel;
+import com.todoseventos.todos_eventos.model.pessoa.ClienteJuridicaModel;
 import com.todoseventos.todos_eventos.utils.Validacao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,10 +30,22 @@ public class EventoService {
     private Validacao validacao;
 
     @Autowired
+    private EmailService emailService;
+
+    @Autowired
     private CepService cepService;
 
     @Autowired
     private EnderecoDao enderecoDao;
+
+    @Autowired
+    private ParticipacaoDao participacaoDao;
+
+    @Autowired
+    private ClienteFisicaDao clienteFisicaDao;
+
+    @Autowired
+    private ClienteJuridicaDao clienteJuridicaDao;
 
     @Autowired
     private CategoriaDao categoriaDao;
@@ -67,6 +80,7 @@ public class EventoService {
                 .dataHora_evento(eventoRequest.getDataHora_evento())
                 .dataHora_eventofinal(eventoRequest.getDataHora_eventofinal())
                 .descricao(eventoRequest.getDescricao())
+                .status("ATIVO")
                 .id_categoria(categoriaModel.getIdCategoria())
                 .build();
 
@@ -88,6 +102,56 @@ public class EventoService {
         return mapearEvento(categoriaModel, eventoSalvo, enderecoSalvo);
     }
 
+    public EventoResponse encerrarEvento(Long idEvento) {
+        EventoModel evento = eventoDao.procurarPorId(idEvento);
+        if (Objects.isNull(evento)) {
+            throw new CustomException("Evento não encontrado!");
+        }
+
+        evento.setStatus("CANCELADO");
+        EventoModel updatedEvento = eventoDao.update(evento);
+
+        List<ParticipacaoModel> participacoes = participacaoDao.findByIdEvento(idEvento);
+        participacoes.forEach(participacao -> {
+            String email;
+            String nomePessoa;
+            if (participacao.getCpf() != null) {
+                ClienteFisicaModel clienteFisica = clienteFisicaDao.findByCpf(participacao.getCpf());
+                email = clienteFisica.getEmail();
+                nomePessoa = clienteFisica.getNome();
+            } else {
+                ClienteJuridicaModel clienteJuridica = clienteJuridicaDao.findByCnpj(participacao.getCnpj());
+                email = clienteJuridica.getEmail();
+                nomePessoa = clienteJuridica.getNome();
+            }
+            emailService.enviarEmailCancelamento(email, nomePessoa, evento.getNome_evento());
+        });
+
+        return mapearEvento(evento);
+    }
+
+    private EventoResponse mapearEvento(EventoModel evento) {
+        CategoriaModel categoria = categoriaDao.findById(evento.getId_categoria());
+        EnderecoModel endereco = enderecoDao.procurarPorIdEvento(evento.getIdEvento())
+                .orElseThrow(() -> new CustomException("Endereço não encontrado para o evento: " + evento.getNome_evento()));
+
+        return EventoResponse.builder()
+                .idEvento(evento.getIdEvento())
+                .nome_evento(evento.getNome_evento())
+                .dataHora_evento(evento.getDataHora_evento())
+                .dataHora_eventofinal(evento.getDataHora_eventofinal())
+                .descricao(evento.getDescricao())
+                .status(evento.getStatus())
+                .categoria(CategoriaEnum.valueOf(categoria.getNomeCategoria()))
+                .rua(endereco.getRua())
+                .numero(endereco.getNumero())
+                .bairro(endereco.getBairro())
+                .cidade(endereco.getCidade())
+                .cep(endereco.getCep())
+                .uf(endereco.getUf())
+                .build();
+    }
+
     private EventoResponse mapearEvento(CategoriaModel categoria, EventoModel eventoSalvo, EnderecoModel enderecoSalvo) {
         return EventoResponse.builder()
                 .idEvento(eventoSalvo.getIdEvento())
@@ -95,6 +159,7 @@ public class EventoService {
                 .dataHora_evento(eventoSalvo.getDataHora_evento())
                 .dataHora_eventofinal(eventoSalvo.getDataHora_eventofinal())
                 .descricao(eventoSalvo.getDescricao())
+                .status(eventoSalvo.getStatus())
                 .categoria(CategoriaEnum.valueOf(categoria.getNomeCategoria()))
                 .rua(enderecoSalvo.getRua())
                 .numero(enderecoSalvo.getNumero())
@@ -104,6 +169,7 @@ public class EventoService {
                 .uf(enderecoSalvo.getUf())
                 .build();
     }
+
 
     public List<EventoResponse> localizarEventos() {
         List<EventoModel> eventoModelList;

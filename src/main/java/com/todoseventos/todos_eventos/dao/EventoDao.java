@@ -29,12 +29,13 @@ class EventoDaoImpl implements EventoDao {
 
     @Override
     public EventoModel save(EventoModel evento) {
-        String sql = "SELECT inserir_evento(?, ?, ?, ?, ?) AS id_evento";
+        String sql = "SELECT inserir_evento(?, ?, ?, ?, ?, ?) AS id_evento";
         Long idEvento = jdbcTemplate.queryForObject(sql, new Object[]{
                 evento.getNome_evento(),
                 evento.getDataHora_evento(),
                 evento.getDataHora_eventofinal(),
                 evento.getDescricao(),
+                evento.getStatus(),
                 evento.getId_categoria()
         }, Long.class);
         evento.setIdEvento(idEvento);
@@ -43,8 +44,8 @@ class EventoDaoImpl implements EventoDao {
 
     @Override
     public EventoModel update(EventoModel evento) {
-        String sql = "UPDATE EVENTO SET nome_evento = ?, dataHora_evento = ?, dataHora_eventofinal = ?, descricao = ?, id_categoria = ? WHERE id_evento = ?";
-        jdbcTemplate.update(sql, evento.getNome_evento(), evento.getDataHora_evento(), evento.getDataHora_eventofinal(), evento.getDescricao(), evento.getId_categoria(), evento.getIdEvento());
+        String sql = "UPDATE EVENTO SET nome_evento = ?, dataHora_evento = ?, dataHora_eventofinal = ?, descricao = ?, status = ?, id_categoria = ? WHERE id_evento = ?";
+        jdbcTemplate.update(sql, evento.getNome_evento(), evento.getDataHora_evento(), evento.getDataHora_eventofinal(), evento.getDescricao(), evento.getStatus(), evento.getId_categoria(), evento.getIdEvento());
         return evento;
     }
 

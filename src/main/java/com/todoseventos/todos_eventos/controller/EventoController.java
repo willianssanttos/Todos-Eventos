@@ -22,9 +22,19 @@ public class EventoController {
     public ResponseEntity<ApiResponse> cadastrarEvento(@RequestBody EventoRequest eventoRequest) {
         try {
             EventoResponse response = eventoService.cadastrarNovoEvento(eventoRequest);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse("Evento cadastrado com sucesso!", response));
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse("“Cadastro realizado com sucesso. Seu evento já está em divulgação!", response));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse("Erro ao cadastrar evento: " + e.getMessage(), null));
+        }
+    }
+
+    @PutMapping("/encerrar/{idEvento}")
+    public ResponseEntity<ApiResponse> encerrarEvento(@PathVariable Long idEvento) {
+        try {
+            EventoResponse response = eventoService.encerrarEvento(idEvento);
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Evento encerrado com sucesso!", response));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse("Erro ao encerrar evento: " + e.getMessage(), null));
         }
     }
 
@@ -62,7 +72,7 @@ public class EventoController {
     public ResponseEntity<ApiResponse> excluirEvento(@PathVariable Long idEvento) {
         try {
             eventoService.excluirEvento(idEvento);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiResponse("Evento excluído com sucesso!", null));
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiResponse("Evento excluído com sucesso!", excluirEvento(idEvento)));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse("Erro ao excluir evento: " + e.getMessage(), null));
         }
