@@ -31,13 +31,14 @@ class EventoDaoImpl implements EventoDao {
     @Override
     public EventoModel save(EventoModel evento) {
         String sql = "SELECT inserir_evento(?, ?, ?, ?, ?, ?) AS id_evento";
+        logger.info("Executando SQL para salvar evento: {}", sql);
         try {
             Long idEvento = jdbcTemplate.queryForObject(sql, new Object[]{
-                    evento.getNome_evento(),
+                    evento.getNome_evento().trim(),
                     evento.getDataHora_evento(),
                     evento.getDataHora_eventofinal(),
-                    evento.getDescricao(),
-                    evento.getStatus(),
+                    evento.getDescricao().trim(),
+                    evento.getStatus().trim(),
                     evento.getId_categoria()
             }, Long.class);
             evento.setIdEvento(idEvento);
@@ -86,6 +87,7 @@ class EventoDaoImpl implements EventoDao {
     @Override
     public List<EventoModel> localizarEvento() {
         String sql = "SELECT e.*, ed.rua, ed.numero, ed.bairro, ed.cidade, ed.cep, ed.uf FROM EVENTO e JOIN ENDERECO ed ON e.id_evento = ed.id_evento";
+        logger.info("Executando SQL para buscar evento: {}", sql);
         try {
             return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(EventoModel.class));
         } catch (Exception e) {

@@ -27,16 +27,22 @@ class ParticipacaoDaoImpl implements ParticipacaoDao {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Override
     public ParticipacaoModel save(ParticipacaoModel participacao) {
-        String sql = "INSERT INTO PARTICIPACAO (cpf, cnpj, id_evento, status) VALUES (?,?,?,?) RETURNING id_participacao";
-        logger.info("Executando SQL para salvar participação: {}", sql);
+        String sql = "SELECT inserir_participacao(CAST(? AS VARCHAR), CAST(? AS VARCHAR), CAST(? AS INT), CAST(? AS VARCHAR))";
         try {
-            Long idParticipacao = jdbcTemplate.queryForObject(sql, Long.class, participacao.getCpf(), participacao.getCnpj(), participacao.getIdEvento(), participacao.getStatus());
+            Long idParticipacao = jdbcTemplate.queryForObject(sql, new Object[]{
+                    participacao.getCpf(),
+                    participacao.getCnpj(),
+                    participacao.getIdEvento(),
+                    participacao.getStatus()
+            }, Long.class);
+
             participacao.setIdParticipacao(idParticipacao);
             logger.info("Participação salva com ID: {}", idParticipacao);
             return participacao;
         } catch (Exception e) {
-            throw new CustomException("Erro ao salvar participação: " + e.getMessage());
+            throw new CustomException("Erro ao salvar Participacao: " + e.getMessage());
         }
     }
 

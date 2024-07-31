@@ -2,6 +2,8 @@ package com.todoseventos.todos_eventos.dao;
 
 import com.todoseventos.todos_eventos.exception.CustomException;
 import com.todoseventos.todos_eventos.model.evento.EnderecoModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -20,6 +22,8 @@ public interface EnderecoDao {
 @Repository
 class EnderecoDaoImpl implements EnderecoDao {
 
+    private static final Logger logger = LoggerFactory.getLogger(EnderecoDaoImpl.class);
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -32,6 +36,7 @@ class EnderecoDaoImpl implements EnderecoDao {
             throw new CustomException("Erro ao salvar endereço: " + e.getMessage());
         }
     }
+
 
     @Override
     public EnderecoModel update(EnderecoModel endereco) {
