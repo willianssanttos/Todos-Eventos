@@ -1,7 +1,7 @@
 package com.todoseventos.todos_eventos.dao;
 
 import com.todoseventos.todos_eventos.exception.CustomException;
-import com.todoseventos.todos_eventos.model.pessoa.ClienteFisicaModel;
+import com.todoseventos.todos_eventos.model.cliente.ClienteFisicaModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;

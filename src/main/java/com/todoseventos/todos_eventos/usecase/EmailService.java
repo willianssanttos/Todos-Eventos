@@ -38,7 +38,6 @@ public class EmailService {
                 "<h3>INFORMAÇÕES DO EVENTO</h3>" +
                 "<p><strong>Data:</strong> " + dataEvento + "</p>" +
                 "<p><strong>Local:</strong> " + localEvento + "</p>" +
-                "<p><a href=\"" + linkConfirmacao + "\" style=\"display:inline-block;padding:10px 20px;margin:10px 0;border-radius:5px;background-color:#28a745;color:#ffffff;text-decoration:none;\">Confirmar participação</a></p>" +
                 "</body>" +
                 "</html>";
     }

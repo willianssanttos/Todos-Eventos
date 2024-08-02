@@ -11,13 +11,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/api")
+@CrossOrigin
 public class ParticipacaoController {
 
     @Autowired
     private ParticipacaoService participacaoService;
 
     @PostMapping
-    @RequestMapping("/api/participacao")
+    @RequestMapping("/participacao")
     public ResponseEntity<ApiResponse> inscreverParticipante(@RequestBody ParticipacaoRequest request) {
         try {
             ParticipacaoResponse response = participacaoService.inscreverParticipante(request);
@@ -29,7 +31,7 @@ public class ParticipacaoController {
         }
     }
 
-    @GetMapping("/api/confirmacao/{idParticipacao}")
+    @GetMapping("/confirmacao/{idParticipacao}")
     public ResponseEntity<ApiResponse> confirmarParticipacao(@PathVariable Long idParticipacao) {
         try {
             ParticipacaoResponse response = participacaoService.confirmarParticipacao(idParticipacao);

@@ -1,4 +1,4 @@
-package com.todoseventos.todos_eventos.model.pessoa;
+package com.todoseventos.todos_eventos.model.cliente;
 
 
 import lombok.AllArgsConstructor;

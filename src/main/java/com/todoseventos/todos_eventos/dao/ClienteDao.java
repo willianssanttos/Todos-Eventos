@@ -1,8 +1,12 @@
 package com.todoseventos.todos_eventos.dao;
 
 import com.todoseventos.todos_eventos.exception.CustomException;
-import com.todoseventos.todos_eventos.model.pessoa.ClienteModel;
+import com.todoseventos.todos_eventos.model.cliente.ClienteModel;
+import com.todoseventos.todos_eventos.model.evento.CategoriaModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -10,6 +14,8 @@ import java.util.List;
 
 @Repository
 public class ClienteDao {
+
+    private static final Logger logger = LoggerFactory.getLogger(ClienteDao.class);
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -21,6 +27,8 @@ public class ClienteDao {
                 "WHERE pf.cpf = ?";
         try {
             return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ClienteModel.class), cpf);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
         } catch (Exception e) {
             throw new CustomException("Erro ao buscar cliente por CPF: " + e.getMessage());
         }
@@ -37,6 +45,18 @@ public class ClienteDao {
             throw new CustomException("Erro ao buscar cliente por CNPJ: " + e.getMessage());
         }
     }
+
+    public ClienteModel procurarPorEmail(String email) {
+        String sql = "SELECT * FROM PESSOA WHERE email = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ClienteModel.class), email);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        } catch (Exception e) {
+            throw new CustomException("Erro ao buscar usuário por email: " + e.getMessage());
+        }
+    }
+
 
     public ClienteModel save(ClienteModel pessoa) {
         String sql = "INSERT INTO PESSOA (nome, email, senha, telefone, id_tipo_pessoa) VALUES (?,?,?,?,?) RETURNING id_pessoa";

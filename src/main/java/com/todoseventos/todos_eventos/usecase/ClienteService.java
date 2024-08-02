@@ -8,13 +8,13 @@ import com.todoseventos.todos_eventos.dto.ClienteRequest;
 import com.todoseventos.todos_eventos.dto.ClienteResponse;
 import com.todoseventos.todos_eventos.dto.TipoClienteEnum;
 import com.todoseventos.todos_eventos.exception.CustomException;
-import com.todoseventos.todos_eventos.model.pessoa.ClienteFisicaModel;
-import com.todoseventos.todos_eventos.model.pessoa.ClienteJuridicaModel;
-import com.todoseventos.todos_eventos.model.pessoa.ClienteModel;
-import com.todoseventos.todos_eventos.model.pessoa.TipoClienteModel;
-import com.todoseventos.todos_eventos.security.PasswordSecurity;
+import com.todoseventos.todos_eventos.model.cliente.ClienteFisicaModel;
+import com.todoseventos.todos_eventos.model.cliente.ClienteJuridicaModel;
+import com.todoseventos.todos_eventos.model.cliente.ClienteModel;
+import com.todoseventos.todos_eventos.model.cliente.TipoClienteModel;
 import com.todoseventos.todos_eventos.utils.Validacoes;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -29,6 +29,9 @@ public class ClienteService {
 
     @Autowired
     private ClienteDao clienteDao;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private TipoClienteDao tipoClienteDao;
@@ -54,12 +57,12 @@ public class ClienteService {
         validarDados(clienteRequest);
 
         clienteRequest.setTelefone(validacoes.formatarNumeroTelefone(clienteRequest.getTelefone()));
-        String tokenSenha = PasswordSecurity.generateToken();
+        String encodedPassword = passwordEncoder.encode(clienteRequest.getSenha());
 
         ClienteModel pessoa = ClienteModel.builder()
                 .nome(clienteRequest.getNome())
                 .email(clienteRequest.getEmail())
-                .senha(tokenSenha)
+                .senha(encodedPassword)
                 .telefone(clienteRequest.getTelefone())
                 .tipo_pessoa(tipoClienteModel.getIdTipoPessoa())
                 .build();
@@ -119,6 +122,7 @@ public class ClienteService {
             }
         }
     }
+
 
     private static ClienteResponse mapearPessoa(TipoClienteEnum tipo_pessoa, ClienteModel pessoaSalva) {
         ClienteResponse.ClienteResponseBuilder builder = ClienteResponse.builder()
@@ -183,10 +187,11 @@ public class ClienteService {
         }
 
         TipoClienteModel tipoClienteModel = tipoClienteDao.findByNomeTipoPessoa(clienteRequest.getTipo_pessoa().name());
+        String encodedPassword = passwordEncoder.encode(clienteRequest.getSenha());
 
         pessoaExistente.setNome(clienteRequest.getNome());
         pessoaExistente.setEmail(clienteRequest.getEmail());
-        pessoaExistente.setSenha(clienteRequest.getSenha());
+        pessoaExistente.setSenha(encodedPassword);
         pessoaExistente.setTelefone(clienteRequest.getTelefone());
         pessoaExistente.setTipo_pessoa(tipoClienteModel.getIdTipoPessoa());
 

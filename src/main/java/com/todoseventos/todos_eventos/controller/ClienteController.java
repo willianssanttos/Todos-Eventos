@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping(value = "/api")
+@CrossOrigin
 public class ClienteController {
-
     @Autowired
     private ClienteService clienteService;
 
-    @PostMapping
-    @RequestMapping("/api/pessoa")
+    @PostMapping("/pessoa")
     public ResponseEntity<ApiResponse> postPessoa(@RequestBody ClienteRequest clienteRequest) {
         try {
             ClienteResponse response = clienteService.cadastrarNovaPessoa(clienteRequest);
@@ -30,7 +30,7 @@ public class ClienteController {
         }
     }
 
-    @GetMapping("/api/pessoa/{identificador}")
+    @GetMapping("/pessoa/{identificador}")
     public ResponseEntity<ApiResponse> getPessoa(@PathVariable String identificador) {
         try {
             ClienteResponse pessoa;
@@ -49,7 +49,7 @@ public class ClienteController {
         }
     }
 
-    @GetMapping("/api/pessoa")
+    @GetMapping("/pessoa")
     public ResponseEntity<ApiResponse> getPessoa() {
         try {
             List<ClienteResponse> response = clienteService.listarPessoas();
@@ -59,7 +59,7 @@ public class ClienteController {
         }
     }
 
-    @PutMapping("/api/pessoa/{identificador}")
+    @PutMapping("/pessoa/{identificador}")
     public ResponseEntity<ApiResponse> putPessoa(@PathVariable("identificador") String identificador, @RequestBody ClienteRequest clienteRequest) {
         try {
             ClienteResponse response = clienteService.atualizarPessoa(identificador, clienteRequest);

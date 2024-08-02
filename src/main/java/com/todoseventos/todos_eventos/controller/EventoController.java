@@ -12,12 +12,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping(value = "/api")
+@CrossOrigin
 public class EventoController {
 
     @Autowired
     private EventoService eventoService;
 
-    @PostMapping("/api/evento")
+    @PostMapping("/evento")
     public ResponseEntity<ApiResponse> cadastrarEvento(@RequestBody EventoRequest eventoRequest) {
         try {
             EventoResponse response = eventoService.cadastrarNovoEvento(eventoRequest);
@@ -41,7 +43,7 @@ public class EventoController {
         }
     }
 
-    @GetMapping("/api/evento")
+    @GetMapping("/evento")
     public ResponseEntity<ApiResponse> listarEventos() {
         try {
             List<EventoResponse> response = eventoService.localizarEventos();
@@ -51,7 +53,7 @@ public class EventoController {
         }
     }
 
-    @GetMapping("/api/evento/{nomeEvento}")
+    @GetMapping("/evento/{nomeEvento}")
     public ResponseEntity<ApiResponse> procurarEventoPorNome(@PathVariable String nomeEvento) {
         try {
             EventoResponse response = eventoService.procurarEventoPorNome(nomeEvento);
@@ -63,7 +65,7 @@ public class EventoController {
         }
     }
 
-    @PutMapping("/api/evento/{nomeEvento}")
+    @PutMapping("/evento/{nomeEvento}")
     public ResponseEntity<ApiResponse> atualizarEvento(@PathVariable String nomeEvento, @RequestBody EventoRequest eventoRequest) {
         try {
             EventoResponse response = eventoService.atualizarEvento(nomeEvento, eventoRequest);
@@ -75,11 +77,11 @@ public class EventoController {
         }
     }
 
-    @DeleteMapping("/api/evento/{idEvento}")
+    @DeleteMapping("/evento/{idEvento}")
     public ResponseEntity<ApiResponse> excluirEvento(@PathVariable Long idEvento) {
         try {
             eventoService.excluirEvento(idEvento);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiResponse("Evento excluído com sucesso!", null));
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Evento excluído com sucesso!", null));
         } catch (CustomException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(e.getMessage(), null));
         } catch (Exception e) {
