@@ -1,10 +1,13 @@
 package com.todoseventos.todos_eventos.controller;
 
-import com.todoseventos.todos_eventos.dto.ApiResponse;
+import com.todoseventos.todos_eventos.dto.CustomExceptionResponse;
 import com.todoseventos.todos_eventos.dto.EventoRequest;
 import com.todoseventos.todos_eventos.dto.EventoResponse;
 import com.todoseventos.todos_eventos.exception.CustomException;
 import com.todoseventos.todos_eventos.usecase.EventoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,73 +22,108 @@ public class EventoController {
     @Autowired
     private EventoService eventoService;
 
+    @Operation(description = "Operação para cadastrado de evento")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cadastro realizado com sucesso. Seu evento já está em divulgação!"),
+            @ApiResponse(responseCode = "417", description = "Erro ao cadastrar o evento!"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor ao realizar cadastro!")
+    })
     @PostMapping("/evento")
-    public ResponseEntity<ApiResponse> cadastrarEvento(@RequestBody EventoRequest eventoRequest) {
+    public ResponseEntity<CustomExceptionResponse> cadastrarEvento(@RequestBody EventoRequest eventoRequest) {
         try {
             EventoResponse response = eventoService.cadastrarNovoEvento(eventoRequest);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse("Cadastro realizado com sucesso. Seu evento já está em divulgação!", response));
+            return ResponseEntity.status(HttpStatus.CREATED).body(new CustomExceptionResponse("Cadastro realizado com sucesso. Seu evento já está em divulgação!", response));
         } catch (CustomException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(e.getMessage(), null));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CustomExceptionResponse(e.getMessage(), null));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("Erro interno ao cadastrar evento", null));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse("Erro interno do servidor ao realizar cadastro", null));
         }
     }
 
+    @Operation(description = "Operação para encerrar evento")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Evento encerrado com sucesso!"),
+            @ApiResponse(responseCode = "400", description = "Erro ao encerrar evento!"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor ao encerrar evento!")
+    })
     @PutMapping("/encerrar/{idEvento}")
-    public ResponseEntity<ApiResponse> encerrarEvento(@PathVariable Long idEvento) {
+    public ResponseEntity<CustomExceptionResponse> encerrarEvento(@PathVariable Long idEvento) {
         try {
             EventoResponse response = eventoService.encerrarEvento(idEvento);
-            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Evento encerrado com sucesso!", response));
+            return ResponseEntity.status(HttpStatus.OK).body(new CustomExceptionResponse("Evento encerrado com sucesso!", response));
         } catch (CustomException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(e.getMessage(), null));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CustomExceptionResponse(e.getMessage(), null));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("Erro interno ao encerrar evento", null));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse("Erro interno do servidor ao encerrar evento!", null));
         }
     }
 
+    @Operation(description = "Operação para listar todos os eventos")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de eventos recuperada com sucesso!"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor ao listar eventos!")
+    })
     @GetMapping("/evento")
-    public ResponseEntity<ApiResponse> listarEventos() {
+    public ResponseEntity<CustomExceptionResponse> listarEventos() {
         try {
             List<EventoResponse> response = eventoService.localizarEventos();
-            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Lista de eventos recuperada com sucesso!", response));
+            return ResponseEntity.status(HttpStatus.OK).body(new CustomExceptionResponse("Lista de eventos recuperada com sucesso!", response));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("Erro interno ao listar eventos", null));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse("Erro interno do servidor ao listar eventos", null));
         }
     }
 
+    @Operation(description = "Operação para buscar evento por nome")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Evento encontrado com sucesso!"),
+            @ApiResponse(responseCode = "400", description = "Erro ao procurar evento!"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor ao procurar evento!")
+    })
     @GetMapping("/evento/{nomeEvento}")
-    public ResponseEntity<ApiResponse> procurarEventoPorNome(@PathVariable String nomeEvento) {
+    public ResponseEntity<CustomExceptionResponse> procurarEventoPorNome(@PathVariable String nomeEvento) {
         try {
             EventoResponse response = eventoService.procurarEventoPorNome(nomeEvento);
-            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Evento encontrado com sucesso!", response));
+            return ResponseEntity.status(HttpStatus.OK).body(new CustomExceptionResponse("Evento encontrado com sucesso!", response));
         } catch (CustomException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(e.getMessage(), null));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CustomExceptionResponse(e.getMessage(), null));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("Erro interno ao procurar evento", null));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse("Erro interno do servidor ao procurar evento", null));
         }
     }
 
+    @Operation(description = "Operação para atualizar evento")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Evento atualizado com sucesso!"),
+            @ApiResponse(responseCode = "400", description = "Erro ao atualizar evento!"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor ao atualizar evento!")
+    })
     @PutMapping("/evento/{nomeEvento}")
-    public ResponseEntity<ApiResponse> atualizarEvento(@PathVariable String nomeEvento, @RequestBody EventoRequest eventoRequest) {
+    public ResponseEntity<CustomExceptionResponse> atualizarEvento(@PathVariable String nomeEvento, @RequestBody EventoRequest eventoRequest) {
         try {
             EventoResponse response = eventoService.atualizarEvento(nomeEvento, eventoRequest);
-            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Evento atualizado com sucesso!", response));
+            return ResponseEntity.status(HttpStatus.OK).body(new CustomExceptionResponse("Evento atualizado com sucesso!", response));
         } catch (CustomException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(e.getMessage(), null));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CustomExceptionResponse(e.getMessage(), null));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("Erro interno ao atualizar evento", null));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse("Erro interno do servidor ao atualizar evento", null));
         }
     }
 
+    @Operation(description = "Operação para excluir evento")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Evento excluído com sucesso!"),
+            @ApiResponse(responseCode = "400", description = "Erro ao excluir evento!"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor ao excluir evento!")
+    })
     @DeleteMapping("/evento/{idEvento}")
-    public ResponseEntity<ApiResponse> excluirEvento(@PathVariable Long idEvento) {
+    public ResponseEntity<CustomExceptionResponse> excluirEvento(@PathVariable Long idEvento) {
         try {
             eventoService.excluirEvento(idEvento);
-            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Evento excluído com sucesso!", null));
+            return ResponseEntity.status(HttpStatus.OK).body(new CustomExceptionResponse("Evento excluído com sucesso!", null));
         } catch (CustomException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(e.getMessage(), null));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CustomExceptionResponse(e.getMessage(), null));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("Erro interno ao excluir evento", null));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse("Erro interno do servidor ao excluir evento", null));
         }
     }
 }

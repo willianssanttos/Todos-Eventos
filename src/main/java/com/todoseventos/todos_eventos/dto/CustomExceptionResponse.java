@@ -6,12 +6,12 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class ApiResponse {
+public class CustomExceptionResponse {
 
     private String message;
     private Object data;
 
-    public ApiResponse(String message, Object data) {
+    public CustomExceptionResponse(String message, Object data) {
 
         this.message = message;
         this.data = data;

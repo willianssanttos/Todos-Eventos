@@ -15,6 +15,11 @@ spring:
       password: raocywkouhuuzaaf
       properties.mail.smtp.auth: true
       properties.mail.smtp.starttls.enable: true
+  springdoc:
+    api-docs:
+      path: /v3/api-docs
+    swagger-ui:
+      path: /swagger-ui.html
 server:
   port: '27031'
 
