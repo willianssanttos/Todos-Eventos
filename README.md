@@ -3,9 +3,6 @@
 ## Descrição
 O projeto **Todos Eventos** é um sistema de gerenciamento de eventos que permite aos usuários cadastrar, consultar, atualizar e excluir eventos. Além disso, o sistema permite a participação em eventos e envia email os usuários sobre eventos que escolheu participar, passando as informações do evento.
 
-## Documentação da Historia e cards de desenvolvimento do Sistema
-- link:https://willianssantos227.atlassian.net/jira/software/projects/SPE/list?atlOrigin=eyJpIjoiMzk0YzVlMWRiNzYyNDAzNGExNTcyMTE3OGUyNzBkNDEiLCJwIjoiaiJ9
-
 ## Funcionalidades
 - Cadastro de usuários
 - Consulta de usuários
@@ -45,7 +42,3 @@ O Swagger está configurado para documentar e testar as APIs do sistema. A docum
  2. Configure o banco de dados PostgreSQL e atualize as credenciais no application.properties.
  3. Execute o projeto usando Maven: 
   - mvn spring-boot:run 
-
-## Diagrama de classes banco de dados 
-
-![Plataforma de Eventos.png](..%2F..%2FUsers%2Fwmatos%2FDownloads%2FPlataforma%20de%20Eventos.png)
