@@ -1,7 +1,7 @@
 # Todos Eventos
 
 ## Descrição
-O projeto **Todos Eventos** é um sistema de gerenciamento de eventos que permite aos usuários cadastrar, consultar, atualizar e excluir eventos. Além disso, o sistema permite a participação em eventos e envia email os usuários sobre eventos escolheu participar, passando as informações do evento.
+O projeto **Todos Eventos** é um sistema de gerenciamento de eventos que permite aos usuários cadastrar, consultar, atualizar e excluir eventos. Além disso, o sistema permite a participação em eventos e envia email os usuários sobre eventos que escolheu participar, passando as informações do evento.
 
 ## Documentação da Historia e cards de desenvolvimento do Sistema
 - link:https://willianssantos227.atlassian.net/jira/software/projects/SPE/list?atlOrigin=eyJpIjoiMzk0YzVlMWRiNzYyNDAzNGExNTcyMTE3OGUyNzBkNDEiLCJwIjoiaiJ9
@@ -37,7 +37,7 @@ spring.jpa.hibernate.ddl-auto=update
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
 ````
 ## Configuração do Swagger
-O Swagger está configurado para documentar e testar as APIs do sistema. A documentação do Swagger pode ser acessada em http://localhost:27031/swagger-ui.html.
+O Swagger está configurado para documentar e testar as APIs do sistema. A documentação do Swagger pode ser acessada em: http://localhost:27031/swagger-ui.html.
 
 ## Como Executar o Projeto
  1. Clone o repositório:
