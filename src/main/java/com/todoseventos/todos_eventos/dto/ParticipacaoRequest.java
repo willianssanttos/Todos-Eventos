@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.relational.core.sql.In;
 
 @Data
 @AllArgsConstructor
@@ -12,5 +13,5 @@ import lombok.NoArgsConstructor;
 public class ParticipacaoRequest {
     private String cpf;
     private String cnpj;
-    private Long idEvento;
+    private Integer idEvento;
 }

@@ -9,7 +9,7 @@ import lombok.*;
 @Builder(toBuilder = true)
 public class EventoResponse {
 
-    private Long idEvento;
+    private Integer idEvento;
     private String nome_evento;
     private String dataHora_evento;
     private String dataHora_eventofinal;

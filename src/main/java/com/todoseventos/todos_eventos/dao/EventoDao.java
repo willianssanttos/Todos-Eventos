@@ -8,18 +8,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 public interface EventoDao {
     EventoModel save(EventoModel evento);
     EventoModel update(EventoModel evento);
-    EventoModel procurarPorNome(String nomeEvento);
-    EventoModel procurarPorId(Long idEvento);
+    Optional<EventoModel> procurarPorNome(String nomeEvento);
+    Optional<EventoModel> procurarPorId(Integer idEvento);
     List<EventoModel> localizarEvento();
-    void deleteById(Long idEvento);
+    void deleteById(Integer idEvento);
 }
+
 @Repository
 class EventoDaoImpl implements EventoDao {
 
@@ -29,18 +35,16 @@ class EventoDaoImpl implements EventoDao {
     private JdbcTemplate jdbcTemplate;
 
     @Override
+    @Transactional
     public EventoModel save(EventoModel evento) {
-        String sql = "SELECT inserir_evento(?, ?, ?, ?, ?, ?) AS id_evento";
-        logger.info("Executando SQL para salvar evento: {}", sql);
+        String sql = "SELECT inserir_evento(?, ?, ?, ?, ?, ?)";
         try {
-            Long idEvento = jdbcTemplate.queryForObject(sql, new Object[]{
-                    evento.getNome_evento().trim(),
-                    evento.getDataHora_evento(),
-                    evento.getDataHora_eventofinal(),
-                    evento.getDescricao().trim(),
-                    evento.getStatus().trim(),
-                    evento.getId_categoria()
-            }, Long.class);
+            jdbcTemplate.execute(sql, (PreparedStatementCallback<Void>) ps -> {
+                setPreparedStatementParameters(ps, evento);
+                ps.execute();
+                return null;
+            });
+            Integer idEvento = jdbcTemplate.queryForObject("SELECT currval(pg_get_serial_sequence('evento','id_evento'))", Integer.class);
             evento.setIdEvento(idEvento);
             return evento;
         } catch (Exception e) {
@@ -49,44 +53,58 @@ class EventoDaoImpl implements EventoDao {
     }
 
     @Override
+    @Transactional
     public EventoModel update(EventoModel evento) {
-        String sql = "UPDATE EVENTO SET nome_evento = ?, dataHora_evento = ?, dataHora_eventofinal = ?, descricao = ?, status = ?, id_categoria = ? WHERE id_evento = ?";
+        String sql = "SELECT atualizar_evento(?, ?, ?, ?, ?, ?, ?)";
         try {
-            jdbcTemplate.update(sql, evento.getNome_evento(), evento.getDataHora_evento(), evento.getDataHora_eventofinal(), evento.getDescricao(), evento.getStatus(), evento.getId_categoria(), evento.getIdEvento());
+            jdbcTemplate.execute(sql, (PreparedStatementCallback<Void>) ps -> {
+                ps.setInt(1, evento.getIdEvento());
+                ps.setString(2, evento.getNome_evento().trim());
+                ps.setString(3, evento.getDataHora_evento());
+                ps.setString(4, evento.getDataHora_eventofinal());
+                ps.setString(5, evento.getDescricao().trim());
+                ps.setString(6, evento.getStatus().trim());
+                ps.setInt(7, evento.getId_categoria());
+                ps.execute();
+                return null;
+            });
             return evento;
         } catch (Exception e) {
             throw new CustomException("Erro ao atualizar evento: " + e.getMessage());
         }
     }
 
+
     @Override
-    public EventoModel procurarPorNome(String nomeEvento) {
-        String sql = "SELECT * FROM EVENTO WHERE nome_evento = ?";
-        logger.info("Executando SQL para buscar evento por nome: {}", sql);
+    @Transactional
+    public Optional<EventoModel> procurarPorNome(String nomeEvento) {
+        String sql = "SELECT * FROM procurar_evento_por_nome(?)";
         try {
-            return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(EventoModel.class), nomeEvento);
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(EventoModel.class), nomeEvento.trim()));
         } catch (EmptyResultDataAccessException e) {
-            throw new CustomException("Evento não encontrado com nome: " + nomeEvento);
+            return Optional.empty();
         } catch (Exception e) {
             throw new CustomException("Erro ao buscar evento por nome: " + e.getMessage());
         }
     }
 
     @Override
-    public EventoModel procurarPorId(Long idEvento) {
-        String sql = "SELECT * FROM EVENTO WHERE id_evento = ?";
+    @Transactional
+    public Optional<EventoModel> procurarPorId(Integer idEvento) {
+        String sql = "SELECT * FROM procurar_evento_por_id(?)";
         try {
-            return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(EventoModel.class), idEvento);
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(EventoModel.class), idEvento));
         } catch (EmptyResultDataAccessException e) {
-            throw new CustomException("Evento não encontrado com ID: " + idEvento);
+            return Optional.empty();
         } catch (Exception e) {
             throw new CustomException("Erro ao buscar evento por ID: " + e.getMessage());
         }
     }
 
     @Override
+    @Transactional
     public List<EventoModel> localizarEvento() {
-        String sql = "SELECT e.*, ed.rua, ed.numero, ed.bairro, ed.cidade, ed.cep, ed.uf FROM EVENTO e JOIN ENDERECO ed ON e.id_evento = ed.id_evento";
+        String sql = "SELECT * FROM localizar_evento()";
         logger.info("Executando SQL para buscar evento: {}", sql);
         try {
             return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(EventoModel.class));
@@ -96,12 +114,26 @@ class EventoDaoImpl implements EventoDao {
     }
 
     @Override
-    public void deleteById(Long idEvento) {
-        String sql = "DELETE FROM EVENTO WHERE id_evento = ?";
+    @Transactional
+    public void deleteById(Integer idEvento) {
+        String sql = "SELECT deletar_evento(?)";
         try {
-            jdbcTemplate.update(sql, idEvento);
+            jdbcTemplate.execute(sql, (PreparedStatementCallback<Void>) ps -> {
+                ps.setInt(1, idEvento);
+                ps.execute();
+                return null;
+            });
         } catch (Exception e) {
             throw new CustomException("Erro ao deletar evento: " + e.getMessage());
         }
+    }
+
+    private void setPreparedStatementParameters(PreparedStatement ps, EventoModel evento) throws SQLException {
+        ps.setString(1, evento.getNome_evento().trim());
+        ps.setString(2, evento.getDataHora_evento());
+        ps.setString(3, evento.getDataHora_eventofinal());
+        ps.setString(4, evento.getDescricao().trim());
+        ps.setString(5, evento.getStatus().trim());
+        ps.setInt(6, evento.getId_categoria());
     }
 }

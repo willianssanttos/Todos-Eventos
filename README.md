@@ -3,6 +3,9 @@
 ## Descrição
 O projeto **Todos Eventos** é um sistema de gerenciamento de eventos que permite aos usuários cadastrar, consultar, atualizar e excluir eventos. Além disso, o sistema permite a participação em eventos e envia email os usuários sobre eventos que escolheu participar, passando as informações do evento.
 
+## Documentação da Historia e cards de desenvolvimento do Sistema
+- link:https://willianssantos227.atlassian.net/jira/software/projects/SPE/list?atlOrigin=eyJpIjoiMzk0YzVlMWRiNzYyNDAzNGExNTcyMTE3OGUyNzBkNDEiLCJwIjoiaiJ9
+
 ## Funcionalidades
 - Cadastro de usuários
 - Consulta de usuários

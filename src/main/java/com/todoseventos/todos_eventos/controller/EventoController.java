@@ -47,7 +47,7 @@ public class EventoController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor ao encerrar evento!")
     })
     @PutMapping("/encerrar/{idEvento}")
-    public ResponseEntity<CustomExceptionResponse> encerrarEvento(@PathVariable Long idEvento) {
+    public ResponseEntity<CustomExceptionResponse> encerrarEvento(@PathVariable Integer idEvento) {
         try {
             EventoResponse response = eventoService.encerrarEvento(idEvento);
             return ResponseEntity.status(HttpStatus.OK).body(new CustomExceptionResponse("Evento encerrado com sucesso!", response));
@@ -116,7 +116,7 @@ public class EventoController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor ao excluir evento!")
     })
     @DeleteMapping("/evento/{idEvento}")
-    public ResponseEntity<CustomExceptionResponse> excluirEvento(@PathVariable Long idEvento) {
+    public ResponseEntity<CustomExceptionResponse> excluirEvento(@PathVariable Integer idEvento) {
         try {
             eventoService.excluirEvento(idEvento);
             return ResponseEntity.status(HttpStatus.OK).body(new CustomExceptionResponse("Evento excluído com sucesso!", null));

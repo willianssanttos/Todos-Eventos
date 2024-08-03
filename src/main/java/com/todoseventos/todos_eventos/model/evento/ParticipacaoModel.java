@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 public class ParticipacaoModel {
-    private Long idParticipacao;
+    private Integer idParticipacao;
     private String cpf;
     private String cnpj;
-    private Long idEvento;
+    private Integer idEvento;
     private String status;
 
 }

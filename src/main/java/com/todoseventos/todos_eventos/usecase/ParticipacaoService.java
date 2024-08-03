@@ -42,10 +42,8 @@ public class ParticipacaoService {
     public ParticipacaoResponse inscreverParticipante(ParticipacaoRequest request) {
         logger.info("Iniciando inscrição do participante: {}", request);
 
-        EventoModel evento = eventoDao.procurarPorId(request.getIdEvento());
-        if (Objects.isNull(evento)) {
-            throw new CustomException(CustomException.EVENTO_NAO_ENCONTRADO);
-        }
+        EventoModel evento = eventoDao.procurarPorId(request.getIdEvento())
+                .orElseThrow(() -> new CustomException(CustomException.EVENTO_NAO_ENCONTRADO));
 
         EnderecoModel endereco = enderecoDao.procurarPorIdEvento(evento.getIdEvento())
                 .orElseThrow(() -> new CustomException(CustomException.ENDERECO_NAO_ENCONTRADO + evento.getNome_evento()));
@@ -91,7 +89,7 @@ public class ParticipacaoService {
         }
     }
 
-    public ParticipacaoResponse confirmarParticipacao(Long idParticipacao) {
+    public ParticipacaoResponse confirmarParticipacao(Integer idParticipacao) {
         logger.info("Confirmando participação com ID: {}", idParticipacao);
         ParticipacaoModel participacao = participacaoDao.findById(idParticipacao);
         if (Objects.isNull(participacao)) {
@@ -102,7 +100,8 @@ public class ParticipacaoService {
         ParticipacaoModel updatedParticipacao = participacaoDao.update(participacao);
         logger.info("Participação confirmada: {}", updatedParticipacao);
 
-        EventoModel evento = eventoDao.procurarPorId(updatedParticipacao.getIdEvento());
+        EventoModel evento = eventoDao.procurarPorId(updatedParticipacao.getIdEvento())
+                .orElseThrow(() -> new CustomException(CustomException.EVENTO_NAO_ENCONTRADO));
         EnderecoModel endereco = enderecoDao.procurarPorIdEvento(evento.getIdEvento())
                 .orElseThrow(() -> new CustomException(CustomException.ENDERECO_NAO_ENCONTRADO + evento.getNome_evento()));
 
@@ -119,6 +118,7 @@ public class ParticipacaoService {
 
     public static ParticipacaoResponse PessoaFisica(ParticipacaoModel participacao, ClienteFisicaModel pessoaFisica, EventoModel evento, EnderecoModel endereco) {
         return ParticipacaoResponse.builder()
+                .idParticipacao(participacao.getIdParticipacao())
                 .nomePessoa(pessoaFisica.getNome())
                 .emailPessoa(pessoaFisica.getEmail())
                 .cpfPessoa(participacao.getCpf())
@@ -132,6 +132,7 @@ public class ParticipacaoService {
 
     public static ParticipacaoResponse PessoaJuridica(ParticipacaoModel participacao, ClienteJuridicaModel pessoaJuridica, EventoModel evento, EnderecoModel endereco) {
         return ParticipacaoResponse.builder()
+                .idParticipacao(participacao.getIdParticipacao())
                 .nomePessoa(pessoaJuridica.getNome())
                 .emailPessoa(pessoaJuridica.getEmail())
                 .cnpjPessoa(participacao.getCnpj())

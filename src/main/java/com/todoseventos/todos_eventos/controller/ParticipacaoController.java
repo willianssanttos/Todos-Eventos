@@ -46,7 +46,7 @@ public class ParticipacaoController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor ao confirmar participação!")
     })
     @GetMapping("/confirmacao/{idParticipacao}")
-    public ResponseEntity<CustomExceptionResponse> confirmarParticipacao(@PathVariable Long idParticipacao) {
+    public ResponseEntity<CustomExceptionResponse> confirmarParticipacao(@PathVariable Integer idParticipacao) {
         try {
             ParticipacaoResponse response = participacaoService.confirmarParticipacao(idParticipacao);
             return ResponseEntity.status(HttpStatus.OK).body(new CustomExceptionResponse("Participação no evento confirmada com sucesso!", response));

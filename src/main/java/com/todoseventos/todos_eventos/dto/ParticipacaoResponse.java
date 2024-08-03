@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 public class ParticipacaoResponse {
 
-    private Long idParticipacao;
+    private Integer idParticipacao;
     private String nomePessoa;
     private String emailPessoa;
     private String cpfPessoa;

@@ -14,7 +14,7 @@ import java.io.Serializable;
 public class EnderecoModel implements Serializable {
 
     private Long idEndereco;
-    private Long idEvento;
+    private Integer idEvento;
     private String rua;
     private String numero;
     private String bairro;

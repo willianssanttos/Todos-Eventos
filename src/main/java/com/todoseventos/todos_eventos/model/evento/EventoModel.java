@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 @Builder(toBuilder = true)
 public class EventoModel implements Serializable {
 
-    private Long idEvento;
+    private Integer idEvento;
     private String nome_evento;
     private String dataHora_evento;
     private String dataHora_eventofinal;

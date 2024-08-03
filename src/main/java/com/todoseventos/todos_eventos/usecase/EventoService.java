@@ -102,12 +102,9 @@ public class EventoService {
         return mapearEvento(categoriaModel, eventoSalvo, enderecoSalvo);
     }
 
-    public EventoResponse encerrarEvento(Long idEvento) {
-        EventoModel evento = eventoDao.procurarPorId(idEvento);
-        if (Objects.isNull(evento)) {
-            throw new CustomException(CustomException.EVENTO_NAO_ENCONTRADO);
-        }
-
+    public EventoResponse encerrarEvento(Integer idEvento) {
+        EventoModel evento = eventoDao.procurarPorId(idEvento)
+                .orElseThrow(() -> new CustomException(CustomException.EVENTO_NAO_ENCONTRADO));
         evento.setStatus("CANCELADO");
         EventoModel updatedEvento = eventoDao.update(evento);
 
@@ -127,10 +124,10 @@ public class EventoService {
             emailService.enviarEmailCancelamento(email, nomePessoa, evento.getNome_evento());
         });
 
-        return mapearEvento(evento);
+        return mapearEncerramentoEvento(evento);
     }
 
-    private EventoResponse mapearEvento(EventoModel evento) {
+    private EventoResponse mapearEncerramentoEvento(EventoModel evento) {
         CategoriaModel categoria = categoriaDao.findById(evento.getId_categoria());
         EnderecoModel endereco = enderecoDao.procurarPorIdEvento(evento.getIdEvento())
                 .orElseThrow(() -> new CustomException(CustomException.ENDERECO_NAO_ENCONTRADO + evento.getNome_evento()));
@@ -204,11 +201,8 @@ public class EventoService {
     }
 
     public EventoResponse procurarEventoPorNome(String nomeEvento) {
-        EventoModel eventoModel = eventoDao.procurarPorNome(nomeEvento);
-
-        if (eventoModel == null) {
-            throw new CustomException(CustomException.EVENTO_NAO_ENCONTRADO);
-        }
+        EventoModel eventoModel = eventoDao.procurarPorNome(nomeEvento)
+                .orElseThrow(() -> new CustomException(CustomException.EVENTO_NAO_ENCONTRADO));
 
         CategoriaModel categoriaModel = categoriaDao.findById(eventoModel.getId_categoria());
         EnderecoModel enderecoModel = enderecoDao.procurarPorIdEvento(eventoModel.getIdEvento())
@@ -218,11 +212,8 @@ public class EventoService {
     }
 
     public EventoResponse atualizarEvento(String nomeEvento, EventoRequest eventoRequest) {
-        EventoModel eventoExistente = eventoDao.procurarPorNome(nomeEvento);
-
-        if (eventoExistente == null) {
-            throw new CustomException(CustomException.EVENTO_NAO_ENCONTRADO);
-        }
+        EventoModel eventoExistente = eventoDao.procurarPorNome(nomeEvento)
+                .orElseThrow(() -> new CustomException(CustomException.EVENTO_NAO_ENCONTRADO));
 
         CategoriaModel categoriaModel = categoriaDao.findNomeCategoria(eventoRequest.getCategoria().name());
 
@@ -265,12 +256,9 @@ public class EventoService {
         return mapearEvento(categoriaModel, eventoAtualizado, enderecoAtualizado);
     }
 
-    public void excluirEvento(Long idEvento) {
-        EventoModel eventoExistente = eventoDao.procurarPorId(idEvento);
-
-        if (eventoExistente == null) {
-            throw new CustomException(CustomException.EVENTO_NAO_ENCONTRADO);
-        }
+    public void excluirEvento(Integer idEvento) {
+        EventoModel eventoExistente = eventoDao.procurarPorId(idEvento)
+                .orElseThrow(() -> new CustomException(CustomException.EVENTO_NAO_ENCONTRADO));
 
         enderecoDao.deleteByIdEvento(idEvento);
         eventoDao.deleteById(idEvento);
