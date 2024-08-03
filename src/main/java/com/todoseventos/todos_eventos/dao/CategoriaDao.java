@@ -6,15 +6,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+public interface CategoriaDao {
+    CategoriaModel findById(Integer idCategoria);
+    CategoriaModel findNomeCategoria(String nomeCategoria);
+}
 
 @Repository
-public class CategoriaDao {
+class CategoriaDaoImpl implements CategoriaDao {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Override
+    @Transactional
     public CategoriaModel findById(Integer idCategoria) {
-        String sql = "SELECT * FROM CATEGORIA WHERE id_categoria = ?";
+        String sql = "SELECT * FROM procurar_categoria_por_id(?)";
         try {
             return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(CategoriaModel.class), idCategoria);
         } catch (Exception e) {
@@ -22,8 +30,10 @@ public class CategoriaDao {
         }
     }
 
+    @Override
+    @Transactional
     public CategoriaModel findNomeCategoria(String nomeCategoria) {
-        String sql = "SELECT * FROM CATEGORIA WHERE nome_categoria = ?";
+        String sql = "SELECT * FROM procurar_categoria_por_nome(?)";
         try {
             return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(CategoriaModel.class), nomeCategoria);
         } catch (Exception e) {
