@@ -13,7 +13,7 @@ import java.io.Serializable;
 @Builder(toBuilder = true)
 public class ClienteFisicaModel implements Serializable {
 
-    private Long idPessoa;
+    private Integer idPessoa;
     private String cpf;
     private String dataNascimento;
     private String nome;

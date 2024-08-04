@@ -13,7 +13,7 @@ import java.io.Serializable;
 @Builder(toBuilder = true)
 public class ClienteModel implements Serializable {
 
-    private Long idPessoa;
+    private Integer idPessoa;
     private String nome;
     private String cpf;
     private String cnpj;

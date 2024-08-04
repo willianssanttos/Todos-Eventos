@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class UserDetailsImpl implements UserDetails {
-    private Long id;
+    private Integer id;
     private String email;
     private String password;
 
-    public UserDetailsImpl(Long id, String email, String password, Collection<? extends GrantedAuthority> authorities) {
+    public UserDetailsImpl(Integer id, String email, String password, Collection<? extends GrantedAuthority> authorities) {
 
         this.id = id;
         this.email = email;

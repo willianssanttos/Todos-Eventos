@@ -9,7 +9,7 @@ import lombok.*;
 @Builder(toBuilder = true)
 public class ClienteResponse {
 
-    private Long idPessoa;
+    private Integer idPessoa;
     private String nome;
     private String email;
     private String senha;

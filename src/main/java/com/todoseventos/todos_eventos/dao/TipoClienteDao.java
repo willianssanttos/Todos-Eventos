@@ -17,6 +17,7 @@ class TipoClienteDaoImpl implements TipoClienteDao{
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Override
     @Transactional
     public TipoClienteModel findByNomeTipoPessoa(String nomeTipoPessoa) {
         String sql = "SELECT * FROM procurar_tipo_cliente_por_nome(?)";
