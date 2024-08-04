@@ -50,6 +50,11 @@ public class EventoService {
     @Autowired
     private CategoriaDao categoriaDao;
 
+    /**
+     * Cadastra um novo evento.
+     * @param eventoRequest Objeto contendo os detalhes do evento a ser cadastrado.
+     * @return Um objeto de resposta contendo os detalhes do evento cadastrado.
+     */
     public EventoResponse cadastrarNovoEvento(EventoRequest eventoRequest) {
 
         if (eventoRequest.getCategoria() == null) {
@@ -102,12 +107,18 @@ public class EventoService {
         return mapearEvento(categoriaModel, eventoSalvo, enderecoSalvo);
     }
 
+    /**
+     * Encerra um evento.
+     * @param idEvento O ID do evento a ser encerrado.
+     * @return Um objeto de resposta contendo os detalhes do evento encerrado.
+     */
     public EventoResponse encerrarEvento(Integer idEvento) {
         EventoModel evento = eventoDao.procurarPorId(idEvento)
                 .orElseThrow(() -> new CustomException(CustomException.EVENTO_NAO_ENCONTRADO));
         evento.setStatus("CANCELADO");
         EventoModel updatedEvento = eventoDao.update(evento);
 
+        // Envia e-mails de cancelamento para todos os participantes do evento
         List<ParticipacaoModel> participacoes = participacaoDao.findByIdEvento(idEvento);
         participacoes.forEach(participacao -> {
             String email;
@@ -127,6 +138,11 @@ public class EventoService {
         return mapearEncerramentoEvento(evento);
     }
 
+    /**
+     * Mapeia os detalhes do encerramento de um evento para um objeto de resposta.
+     * @param evento O objeto evento contendo os detalhes do evento.
+     * @return Um objeto de resposta contendo os detalhes do evento encerrado.
+     */
     private EventoResponse mapearEncerramentoEvento(EventoModel evento) {
         CategoriaModel categoria = categoriaDao.findById(evento.getId_categoria());
         EnderecoModel endereco = enderecoDao.procurarPorIdEvento(evento.getIdEvento())
@@ -149,6 +165,13 @@ public class EventoService {
                 .build();
     }
 
+    /**
+     * Mapeia os detalhes de um evento para um objeto de resposta.
+     * @param categoria O objeto categoria contendo os detalhes da categoria do evento.
+     * @param eventoSalvo O objeto evento contendo os detalhes do evento salvo.
+     * @param enderecoSalvo O objeto endereço contendo os detalhes do endereço salvo.
+     * @return Um objeto de resposta contendo os detalhes do evento.
+     */
     private EventoResponse mapearEvento(CategoriaModel categoria, EventoModel eventoSalvo, EnderecoModel enderecoSalvo) {
         return EventoResponse.builder()
                 .idEvento(eventoSalvo.getIdEvento())
@@ -167,6 +190,10 @@ public class EventoService {
                 .build();
     }
 
+    /**
+     * Localiza todos os eventos cadastrados.
+     * @return Uma lista de objetos de resposta contendo os detalhes dos eventos localizados.
+     */
     public List<EventoResponse> localizarEventos() {
         List<EventoModel> eventoModelList;
         List<EventoResponse> eventoResponseList = new ArrayList<>();
@@ -200,6 +227,11 @@ public class EventoService {
         return eventoResponseList;
     }
 
+    /**
+     * Procura um evento pelo nome.
+     * @param nomeEvento O nome do evento a ser procurado.
+     * @return Um objeto de resposta contendo os detalhes do evento localizado.
+     */
     public EventoResponse procurarEventoPorNome(String nomeEvento) {
         EventoModel eventoModel = eventoDao.procurarPorNome(nomeEvento)
                 .orElseThrow(() -> new CustomException(CustomException.EVENTO_NAO_ENCONTRADO));
@@ -211,6 +243,12 @@ public class EventoService {
         return mapearEvento(categoriaModel, eventoModel, enderecoModel);
     }
 
+    /**
+     * Atualiza um evento existente.
+     * @param nomeEvento O nome do evento a ser atualizado.
+     * @param eventoRequest Objeto contendo os novos detalhes do evento.
+     * @return Um objeto de resposta contendo os detalhes do evento atualizado.
+     */
     public EventoResponse atualizarEvento(String nomeEvento, EventoRequest eventoRequest) {
         EventoModel eventoExistente = eventoDao.procurarPorNome(nomeEvento)
                 .orElseThrow(() -> new CustomException(CustomException.EVENTO_NAO_ENCONTRADO));
@@ -256,6 +294,10 @@ public class EventoService {
         return mapearEvento(categoriaModel, eventoAtualizado, enderecoAtualizado);
     }
 
+    /**
+     * Exclui um evento.
+     * @param idEvento O ID do evento a ser excluído.
+     */
     public void excluirEvento(Integer idEvento) {
         EventoModel eventoExistente = eventoDao.procurarPorId(idEvento)
                 .orElseThrow(() -> new CustomException(CustomException.EVENTO_NAO_ENCONTRADO));

@@ -1,7 +1,7 @@
 package com.todoseventos.todos_eventos.controller;
 
 import com.todoseventos.todos_eventos.dto.AuthenticationDTO;
-import com.todoseventos.todos_eventos.usecase.AuthService;
+import com.todoseventos.todos_eventos.usecase.AutenticacaoService;
 import com.todoseventos.todos_eventos.usecase.ClienteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin
-public class AuthController {
+public class AutenticacaoController {
 
     @Autowired
-    private AuthService authService;
+    private AutenticacaoService autenticacaoService;
 
     @Autowired
     private ClienteService clienteService;
@@ -29,6 +29,6 @@ public class AuthController {
     })
     @PostMapping(value = "/login")
     public ResponseEntity<?> login(@RequestBody AuthenticationDTO authDto){
-        return ResponseEntity.ok(authService.login(authDto));
+        return ResponseEntity.ok(autenticacaoService.login(authDto));
     }
 }

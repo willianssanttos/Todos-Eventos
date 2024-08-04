@@ -14,6 +14,15 @@ public class EmailService {
     @Autowired
     private JavaMailSender emailSender;
 
+    /**
+     * Envia um e-mail de confirmação de inscrição.
+     * @param destinatario O endereço de e-mail do destinatário.
+     * @param assunto O assunto do e-mail.
+     * @param nomePessoa O nome do destinatário.
+     * @param nomeEvento O nome do evento.
+     * @param dataEvento A data do evento.
+     * @param localEvento O local do evento.
+     */
     public void enviarEmail(String destinatario, String assunto, String nomePessoa, String nomeEvento, String dataEvento, String localEvento, String linkConfirmacao) {
         MimeMessage mimeMessage = emailSender.createMimeMessage();
 
@@ -29,6 +38,14 @@ public class EmailService {
         }
     }
 
+    /**
+     * Gera o corpo do e-mail de confirmação de inscrição.
+     * @param nomePessoa O nome do destinatário.
+     * @param nomeEvento O nome do evento.
+     * @param dataEvento A data do evento.
+     * @param localEvento O local do evento.
+     * @return O corpo do e-mail em formato HTML.
+     */
     private String gerarCorpoEmail(String nomePessoa, String nomeEvento, String dataEvento, String localEvento, String linkConfirmacao) {
         return "<html>" +
                 "<body>" +
@@ -42,6 +59,15 @@ public class EmailService {
                 "</html>";
     }
 
+    /**
+     * Envia um e-mail de confirmação de participação.
+     * @param destinatario O endereço de e-mail do destinatário.
+     * @param assunto O assunto do e-mail.
+     * @param nomePessoa O nome do destinatário.
+     * @param nomeEvento O nome do evento.
+     * @param dataEvento A data do evento.
+     * @param endereco O endereço do evento.
+     */
     public void enviarEmailConfirmacao(String destinatario, String assunto, String nomePessoa, String nomeEvento, String dataEvento, EnderecoModel endereco) {
         MimeMessage mimeMessage = emailSender.createMimeMessage();
 
@@ -57,6 +83,14 @@ public class EmailService {
         }
     }
 
+    /**
+     * Gera o corpo do e-mail de confirmação de participação.
+     * @param nomePessoa O nome do destinatário.
+     * @param nomeEvento O nome do evento.
+     * @param dataEvento A data do evento.
+     * @param endereco O endereço do evento.
+     * @return O corpo do e-mail em formato HTML.
+     */
     private String gerarCorpoEmailConfirmacao(String nomePessoa, String nomeEvento, String dataEvento, EnderecoModel endereco) {
         return "<html>" +
                 "<body>" +
@@ -70,6 +104,12 @@ public class EmailService {
                 "</html>";
     }
 
+    /**
+     * Envia um e-mail de cancelamento de evento.
+     * @param destinatario O endereço de e-mail do destinatário.
+     * @param nomePessoa O nome do destinatário.
+     * @param nomeEvento O nome do evento.
+     */
     public void enviarEmailCancelamento(String destinatario, String nomePessoa, String nomeEvento) {
         MimeMessage mimeMessage = emailSender.createMimeMessage();
 
@@ -85,6 +125,12 @@ public class EmailService {
         }
     }
 
+    /**
+     * Gera o corpo do e-mail de cancelamento de evento.
+     * @param nomePessoa O nome do destinatário.
+     * @param nomeEvento O nome do evento.
+     * @return O corpo do e-mail em formato HTML.
+     */
     private String gerarCorpoEmailCancelamento(String nomePessoa, String nomeEvento) {
         return "<html>" +
                 "<body>" +

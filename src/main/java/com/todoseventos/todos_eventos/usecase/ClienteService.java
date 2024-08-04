@@ -42,6 +42,11 @@ public class ClienteService {
     @Autowired
     private ClienteJuridicaDao clienteJuridicaDao;
 
+    /**
+     * Cadastra uma nova pessoa (física ou jurídica).
+     * @param clienteRequest Objeto contendo os detalhes da pessoa a ser cadastrada.
+     * @return Um objeto de resposta contendo os detalhes da pessoa cadastrada.
+     */
     public ClienteResponse cadastrarNovaPessoa(ClienteRequest clienteRequest) {
 
         if (clienteRequest.getTipo_pessoa() == null) {
@@ -87,6 +92,10 @@ public class ClienteService {
         return mapearPessoa(clienteRequest.getTipo_pessoa(), pessoaSalva);
     }
 
+    /**
+     * Valida os dados do cliente.
+     * @param clienteRequest Objeto contendo os detalhes do cliente a ser validado.
+     */
     private void validarDados(ClienteRequest clienteRequest) {
         if (!validacoes.validarEmail(clienteRequest.getEmail())) {
             throw new CustomException(CustomException.EMAIL_INVALIDO);
@@ -123,7 +132,12 @@ public class ClienteService {
         }
     }
 
-
+    /**
+     * Mapeia os detalhes de uma pessoa (física ou jurídica) para um objeto de resposta.
+     * @param tipo_pessoa O tipo da pessoa (física ou jurídica).
+     * @param pessoaSalva O objeto pessoa contendo os detalhes da pessoa salva.
+     * @return Um objeto de resposta contendo os detalhes da pessoa.
+     */
     private static ClienteResponse mapearPessoa(TipoClienteEnum tipo_pessoa, ClienteModel pessoaSalva) {
         ClienteResponse.ClienteResponseBuilder builder = ClienteResponse.builder()
                 .nome(pessoaSalva.getNome())
@@ -134,14 +148,19 @@ public class ClienteService {
                 .idPessoa(pessoaSalva.getIdPessoa());
 
         if (tipo_pessoa == TipoClienteEnum.FISICA) {
-            builder.cpf(pessoaSalva.getCpf() != null ? pessoaSalva.getCpf() : "")
-                    .dataNascimento(pessoaSalva.getDataNascimento() != null ? pessoaSalva.getDataNascimento() : "");
+            builder.cpf(pessoaSalva.getCpf())
+                    .dataNascimento(pessoaSalva.getDataNascimento());
         } else if (tipo_pessoa == TipoClienteEnum.JURIDICA) {
-            builder.cnpj(pessoaSalva.getCnpj() != null ? pessoaSalva.getCnpj() : "");
+            builder.cnpj(pessoaSalva.getCnpj());
         }
         return builder.build();
     }
 
+    /**
+     * Procura uma pessoa física pelo CPF.
+     * @param cpf O CPF da pessoa física.
+     * @return Um objeto de resposta contendo os detalhes da pessoa encontrada.
+     */
     public ClienteResponse procurarPessoaPorCpf(String cpf) {
         ClienteModel pessoaFisicaEncontrada = clienteDao.procurarPorCpf(cpf);
         if (Objects.isNull(pessoaFisicaEncontrada)) {
@@ -150,6 +169,11 @@ public class ClienteService {
         return mapearPessoa(TipoClienteEnum.FISICA, pessoaFisicaEncontrada);
     }
 
+    /**
+     * Procura uma pessoa jurídica pelo CNPJ.
+     * @param cnpj O CNPJ da pessoa jurídica.
+     * @return Um objeto de resposta contendo os detalhes da pessoa encontrada.
+     */
     public ClienteResponse procurarPessoaPorCnpj(String cnpj) {
         ClienteModel pessoaJuridicaEncontrada = clienteDao.procurarPorCnpj(cnpj);
 
@@ -159,6 +183,10 @@ public class ClienteService {
         return mapearPessoa(TipoClienteEnum.JURIDICA, pessoaJuridicaEncontrada);
     }
 
+    /**
+     * Lista todas as pessoas cadastradas.
+     * @return Uma lista de objetos de resposta contendo os detalhes das pessoas cadastradas.
+     */
     public List<ClienteResponse> listarPessoas() {
         List<ClienteModel> pessoasEncontradas = clienteDao.listarTodasPessoas();
         List<ClienteResponse> clienteResponse = new ArrayList<>();
@@ -170,6 +198,12 @@ public class ClienteService {
         return clienteResponse;
     }
 
+    /**
+     * Atualiza os detalhes de uma pessoa (física ou jurídica).
+     * @param identificador O CPF ou CNPJ da pessoa a ser atualizada.
+     * @param clienteRequest Objeto contendo os novos detalhes da pessoa.
+     * @return Um objeto de resposta contendo os detalhes da pessoa atualizada.
+     */
     public ClienteResponse atualizarPessoa(String identificador, ClienteRequest clienteRequest) {
         ClienteModel pessoaExistente;
 

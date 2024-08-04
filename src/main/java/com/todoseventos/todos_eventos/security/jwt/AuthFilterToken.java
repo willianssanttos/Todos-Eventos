@@ -1,7 +1,7 @@
 package com.todoseventos.todos_eventos.security.jwt;
 
 import com.todoseventos.todos_eventos.exception.CustomException;
-import com.todoseventos.todos_eventos.usecase.UserDetailServiceImpl;
+import com.todoseventos.todos_eventos.usecase.DetalheUsuarioServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,8 +22,16 @@ public class AuthFilterToken extends OncePerRequestFilter {
     private JwtUtils jwtUtil;
 
     @Autowired
-    private UserDetailServiceImpl userDetailService;
+    private DetalheUsuarioServiceImpl userDetailService;
 
+    /**
+     * Filtra cada requisição para verificar a presença de um token JWT válido.
+     * @param request O objeto HttpServletRequest.
+     * @param response O objeto HttpServletResponse.
+     * @param filterChain O objeto FilterChain.
+     * @throws ServletException se ocorrer um erro de servlet.
+     * @throws IOException se ocorrer um erro de I/O.
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -47,6 +55,11 @@ public class AuthFilterToken extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    /**
+     * Obtém o token JWT do cabeçalho da requisição.
+     * @param request O objeto HttpServletRequest.
+     * @return O token JWT, ou null se não estiver presente.
+     */
     private String getToken(HttpServletRequest request) {
         String headerToken = request.getHeader("Authorization");
         if(StringUtils.hasText(headerToken) && headerToken.startsWith("Bearer")) {

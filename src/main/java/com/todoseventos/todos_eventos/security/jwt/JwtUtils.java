@@ -21,6 +21,11 @@ public class JwtUtils {
     @Value("${spring.application.projeto.jwtExpirationMs}")
     private int jwtExpirationMs;
 
+    /**
+     * Gera um token JWT a partir dos detalhes do usuário.
+     * @param userDetail Os detalhes do usuário.
+     * @return O token JWT gerado.
+     */
     public String generateTokenFromUserDetailsImpl(UserDetailsImpl userDetail){
         return Jwts.builder().setSubject(userDetail.getUsername())
                 .setIssuedAt(new Date())
@@ -29,16 +34,30 @@ public class JwtUtils {
 
     }
 
+    /**
+     * Obtém a chave de assinatura para o JWT a partir do segredo configurado.
+     * @return A chave de assinatura.
+     */
     public Key getSigninKey(){
         SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
         return key;
     }
 
+    /**
+     * Obtém o nome de usuário (subject) a partir do token JWT.
+     * @param token O token JWT.
+     * @return O nome de usuário contido no token.
+     */
     public String getUsernameToken(String token) {
         return Jwts.parser().setSigningKey(getSigninKey()).build()
                 .parseClaimsJws(token).getBody().getSubject();
     }
 
+    /**
+     * Obtém o nome de usuário (subject) a partir do token JWT.
+     * @param token O token JWT.
+     * @return O nome de usuário contido no token.
+     */
     public boolean validateJwtToken(String authToken) {
         try {
             Jwts.parser().setSigningKey(getSigninKey()).build().parseClaimsJws(authToken);
