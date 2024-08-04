@@ -1,6 +1,5 @@
 package com.todoseventos.todos_eventos.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 @Getter
@@ -17,7 +16,6 @@ public class ClienteRequest {
     private String email;
     private String senha;
     private String telefone;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private String dataNascimento;
     private TipoClienteEnum tipo_pessoa;
 }

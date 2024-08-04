@@ -45,3 +45,9 @@ O Swagger está configurado para documentar e testar as APIs do sistema. A docum
  2. Configure o banco de dados PostgreSQL e atualize as credenciais no application.properties.
  3. Execute o projeto usando Maven: 
   - mvn spring-boot:run 
+
+## Scrip da base de dados e as functions
+
+- Link: https://bitbucket.org/spe-todos-ventos/script_e_fuctions_basededados/src/master/
+
+- Observção: Realizar a execução do script da base de dados primeiro, e logo apos realizar a execução dos scripts das functions
