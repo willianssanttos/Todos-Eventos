@@ -10,9 +10,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface ClienteFisicaDao {
-    ClienteFisicaModel save(ClienteFisicaModel pessoaFisica);
-    ClienteFisicaModel update(ClienteFisicaModel pessoaFisica);
-    ClienteFisicaModel findByCpf(String cpf);
+    ClienteFisicaModel salvarCliFisico(ClienteFisicaModel pessoaFisica);
+    ClienteFisicaModel atualizarCliFisico(ClienteFisicaModel pessoaFisica);
+    ClienteFisicaModel procurarCpf(String cpf);
 }
 @Repository
 class ClienteFisicaDaoImpl implements ClienteFisicaDao{
@@ -22,7 +22,7 @@ class ClienteFisicaDaoImpl implements ClienteFisicaDao{
 
     @Override
     @Transactional
-    public ClienteFisicaModel save(ClienteFisicaModel pessoaFisica) {
+    public ClienteFisicaModel salvarCliFisico(ClienteFisicaModel pessoaFisica) {
         String sql = "SELECT inserir_cliente_fisico(?, ?, ?)";
         try {
             jdbcTemplate.execute(sql, (PreparedStatementCallback<Void>) ps -> {
@@ -34,13 +34,13 @@ class ClienteFisicaDaoImpl implements ClienteFisicaDao{
             });
             return pessoaFisica;
         } catch (Exception e) {
-            throw new CustomException("Erro ao salvar cliente físico: " + e.getMessage());
+            throw new CustomException(CustomException.ERRO_SALVAR + e.getMessage());
         }
     }
 
     @Override
     @Transactional
-    public ClienteFisicaModel update(ClienteFisicaModel pessoaFisica) {
+    public ClienteFisicaModel atualizarCliFisico(ClienteFisicaModel pessoaFisica) {
         String sql = "SELECT atualizar_cliente_fisico(?, ?, ?)";
         try {
             jdbcTemplate.execute(sql, (PreparedStatementCallback<Void>) ps -> {
@@ -52,18 +52,18 @@ class ClienteFisicaDaoImpl implements ClienteFisicaDao{
             });
             return pessoaFisica;
         } catch (Exception e) {
-            throw new CustomException("Erro ao atualizar cliente físico: " + e.getMessage());
+            throw new CustomException(CustomException.ERRO_ATUALIZAR + e.getMessage());
         }
     }
 
     @Override
     @Transactional
-    public ClienteFisicaModel findByCpf(String cpf) {
+    public ClienteFisicaModel procurarCpf(String cpf) {
         String sql = "SELECT * FROM procurar_cliente_fisico_por_cpf(?)";
         try {
             return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ClienteFisicaModel.class), cpf);
         } catch (Exception e) {
-            throw new CustomException("Erro ao buscar cliente físico por CPF: " + e.getMessage());
+            throw new CustomException(CustomException.ERRO_BUSCAR_CLIENTE_CPF + e.getMessage());
         }
     }
 }

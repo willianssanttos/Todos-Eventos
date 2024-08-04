@@ -58,7 +58,7 @@ public class ParticipacaoService {
 
         // Verifica se é um participante pessoa física
         if (request.getCpf() != null) {
-            ClienteFisicaModel pessoaFisica = clienteFisicaDao.findByCpf(request.getCpf());
+            ClienteFisicaModel pessoaFisica = clienteFisicaDao.procurarCpf(request.getCpf());
             if (Objects.isNull(pessoaFisica)) {
                 throw new CustomException(CustomException.PESSOA_FISICA_NAO_ENCONTRADA);
             }
@@ -69,7 +69,7 @@ public class ParticipacaoService {
                     .idEvento(request.getIdEvento())
                     .status("PENDENTE")
                     .build();
-            ParticipacaoModel savedParticipacao = participacaoDao.save(participacao);
+            ParticipacaoModel savedParticipacao = participacaoDao.salvarParticipacao(participacao);
 
             // Envia e-mail de confirmação para pessoa física
             String localEvento = endereco.getRua() + ", " + endereco.getNumero() + ", " + endereco.getBairro() + ", " + endereco.getCidade() + ", " + endereco.getUf();
@@ -80,7 +80,7 @@ public class ParticipacaoService {
         } else if (request.getCnpj() != null) {
 
             // Verifica se é um participante pessoa jurídica
-            ClienteJuridicaModel pessoaJuridica = clienteJuridicaDao.findByCnpj(request.getCnpj());
+            ClienteJuridicaModel pessoaJuridica = clienteJuridicaDao.procurarCnpj(request.getCnpj());
             if (Objects.isNull(pessoaJuridica)) {
                 throw new CustomException(CustomException.PESSOA_JURIDICA_NAO_ENCONTRADA);
             }
@@ -92,7 +92,7 @@ public class ParticipacaoService {
                     .status("PENDENTE")
                     .build();
             logger.info("Salvando participação para pessoa jurídica: {}", participacao);
-            ParticipacaoModel savedParticipacao = participacaoDao.save(participacao);
+            ParticipacaoModel savedParticipacao = participacaoDao.salvarParticipacao(participacao);
             logger.info("Participação salva: {}", savedParticipacao);
 
             // Envia e-mail de confirmação para pessoa jurídica
@@ -114,14 +114,14 @@ public class ParticipacaoService {
      */
     public ParticipacaoResponse confirmarParticipacao(Integer idParticipacao) {
         logger.info("Confirmando participação com ID: {}", idParticipacao);
-        ParticipacaoModel participacao = participacaoDao.findById(idParticipacao);
+        ParticipacaoModel participacao = participacaoDao.localizarPorId(idParticipacao);
         if (Objects.isNull(participacao)) {
             throw new CustomException(CustomException.PARTICIPACAO_NAO_ENCONTRADA);
         }
 
         // Atualiza o status da participação para "CONFIRMADO"
         participacao.setStatus("CONFIRMADO");
-        ParticipacaoModel updatedParticipacao = participacaoDao.update(participacao);
+        ParticipacaoModel updatedParticipacao = participacaoDao.atualizarParticipacao(participacao);
         logger.info("Participação confirmada: {}", updatedParticipacao);
 
         // Obtém os detalhes do evento e endereço associados
@@ -132,11 +132,11 @@ public class ParticipacaoService {
 
         // Envia e-mail de confirmação de participação
         if (updatedParticipacao.getCpf() != null) {
-            ClienteFisicaModel pessoaFisica = clienteFisicaDao.findByCpf(updatedParticipacao.getCpf());
+            ClienteFisicaModel pessoaFisica = clienteFisicaDao.procurarCpf(updatedParticipacao.getCpf());
             emailService.enviarEmailConfirmacao(pessoaFisica.getEmail(), "Confirmação de Participação", pessoaFisica.getNome(), evento.getNome_evento(), evento.getDataHora_evento(), endereco);
             return PessoaFisica(updatedParticipacao, pessoaFisica, evento, endereco);
         } else {
-            ClienteJuridicaModel pessoaJuridica = clienteJuridicaDao.findByCnpj(updatedParticipacao.getCnpj());
+            ClienteJuridicaModel pessoaJuridica = clienteJuridicaDao.procurarCnpj(updatedParticipacao.getCnpj());
             emailService.enviarEmailConfirmacao(pessoaJuridica.getEmail(), "Confirmação de Participação", pessoaJuridica.getNome(), evento.getNome_evento(), evento.getDataHora_evento(), endereco);
             return PessoaJuridica(updatedParticipacao, pessoaJuridica, evento, endereco);
         }

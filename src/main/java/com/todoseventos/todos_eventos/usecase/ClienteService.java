@@ -53,7 +53,7 @@ public class ClienteService {
             throw new CustomException(CustomException.TIPO_CATEGORIA_INVALIDO);
         }
 
-        TipoClienteModel tipoClienteModel = tipoClienteDao.findByNomeTipoPessoa(clienteRequest.getTipo_pessoa().name());
+        TipoClienteModel tipoClienteModel = tipoClienteDao.buscarPorNomeTipoPessoa(clienteRequest.getTipo_pessoa().name());
 
         if (Objects.isNull(tipoClienteModel)) {
             throw new CustomException(CustomException.CATEGORIA_INVALIDA);
@@ -72,7 +72,7 @@ public class ClienteService {
                 .tipo_pessoa(tipoClienteModel.getIdTipoPessoa())
                 .build();
 
-        ClienteModel pessoaSalva = clienteDao.save(pessoa);
+        ClienteModel pessoaSalva = clienteDao.salvarCliente(pessoa);
 
         if (clienteRequest.getTipo_pessoa() == TipoClienteEnum.FISICA) {
             ClienteFisicaModel pessoaFisica = ClienteFisicaModel.builder()
@@ -80,14 +80,14 @@ public class ClienteService {
                     .dataNascimento(clienteRequest.getDataNascimento())
                     .idPessoa(pessoaSalva.getIdPessoa())
                     .build();
-            clienteFisicaDao.save(pessoaFisica);
+            clienteFisicaDao.salvarCliFisico(pessoaFisica);
 
         } else if (clienteRequest.getTipo_pessoa() == TipoClienteEnum.JURIDICA) {
             ClienteJuridicaModel pessoaJuridica = ClienteJuridicaModel.builder()
                     .cnpj(clienteRequest.getCnpj())
                     .idPessoa(pessoaSalva.getIdPessoa())
                     .build();
-            clienteJuridicaDao.save(pessoaJuridica);
+            clienteJuridicaDao.salvarCliJuridico(pessoaJuridica);
         }
         return mapearPessoa(clienteRequest.getTipo_pessoa(), pessoaSalva);
     }
@@ -220,7 +220,7 @@ public class ClienteService {
             throw new CustomException(CustomException.CLIENTE_NAO_ENCONTRADO);
         }
 
-        TipoClienteModel tipoClienteModel = tipoClienteDao.findByNomeTipoPessoa(clienteRequest.getTipo_pessoa().name());
+        TipoClienteModel tipoClienteModel = tipoClienteDao.buscarPorNomeTipoPessoa(clienteRequest.getTipo_pessoa().name());
         String encodedPassword = passwordEncoder.encode(clienteRequest.getSenha());
 
         pessoaExistente.setNome(clienteRequest.getNome());
@@ -229,22 +229,22 @@ public class ClienteService {
         pessoaExistente.setTelefone(clienteRequest.getTelefone());
         pessoaExistente.setTipo_pessoa(tipoClienteModel.getIdTipoPessoa());
 
-        ClienteModel clienteAtualizado = clienteDao.update(pessoaExistente);
+        ClienteModel clienteAtualizado = clienteDao.atualizarCliente(pessoaExistente);
 
         if (clienteRequest.getTipo_pessoa() == TipoClienteEnum.FISICA) {
-            ClienteFisicaModel pessoaFisica = clienteFisicaDao.findByCpf(identificador);
+            ClienteFisicaModel pessoaFisica = clienteFisicaDao.procurarCpf(identificador);
             if (pessoaFisica != null) {
                 pessoaFisica.setIdPessoa(clienteAtualizado.getIdPessoa());
                 pessoaFisica.setCpf(clienteRequest.getCpf());
                 pessoaFisica.setDataNascimento(clienteRequest.getDataNascimento());
-                clienteFisicaDao.update(pessoaFisica);
+                clienteFisicaDao.atualizarCliFisico(pessoaFisica);
             }
         } else if (clienteRequest.getTipo_pessoa() == TipoClienteEnum.JURIDICA) {
-            ClienteJuridicaModel pessoaJuridica = clienteJuridicaDao.findByCnpj(identificador);
+            ClienteJuridicaModel pessoaJuridica = clienteJuridicaDao.procurarCnpj(identificador);
             if (pessoaJuridica != null) {
                 pessoaJuridica.setIdPessoa(clienteAtualizado.getIdPessoa());
                 pessoaJuridica.setCnpj(clienteRequest.getCnpj());
-                clienteJuridicaDao.update(pessoaJuridica);
+                clienteJuridicaDao.atualizarJuridico(pessoaJuridica);
             }
         }
         return mapearPessoa(clienteRequest.getTipo_pessoa(), clienteAtualizado);

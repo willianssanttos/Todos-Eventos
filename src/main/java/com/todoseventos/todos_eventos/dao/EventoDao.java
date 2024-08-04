@@ -18,12 +18,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EventoDao {
-    EventoModel save(EventoModel evento);
-    EventoModel update(EventoModel evento);
+    EventoModel salvarEvento(EventoModel evento);
+    EventoModel atualizarEvento(EventoModel evento);
     Optional<EventoModel> procurarPorNome(String nomeEvento);
     Optional<EventoModel> procurarPorId(Integer idEvento);
     List<EventoModel> localizarEvento();
-    void deleteById(Integer idEvento);
+    void deletarPorId(Integer idEvento);
 }
 
 @Repository
@@ -36,7 +36,7 @@ class EventoDaoImpl implements EventoDao {
 
     @Override
     @Transactional
-    public EventoModel save(EventoModel evento) {
+    public EventoModel salvarEvento(EventoModel evento) {
         String sql = "SELECT inserir_evento(?, ?, ?, ?, ?, ?)";
         try {
             jdbcTemplate.execute(sql, (PreparedStatementCallback<Void>) ps -> {
@@ -48,13 +48,13 @@ class EventoDaoImpl implements EventoDao {
             evento.setIdEvento(idEvento);
             return evento;
         } catch (Exception e) {
-            throw new CustomException("Erro ao salvar evento: " + e.getMessage());
+            throw new CustomException(CustomException.ERRO_SALVAR + e.getMessage());
         }
     }
 
     @Override
     @Transactional
-    public EventoModel update(EventoModel evento) {
+    public EventoModel atualizarEvento(EventoModel evento) {
         String sql = "SELECT atualizar_evento(?, ?, ?, ?, ?, ?, ?)";
         try {
             jdbcTemplate.execute(sql, (PreparedStatementCallback<Void>) ps -> {
@@ -70,7 +70,7 @@ class EventoDaoImpl implements EventoDao {
             });
             return evento;
         } catch (Exception e) {
-            throw new CustomException("Erro ao atualizar evento: " + e.getMessage());
+            throw new CustomException(CustomException.ERRO_ATUALIZAR + e.getMessage());
         }
     }
 
@@ -84,7 +84,7 @@ class EventoDaoImpl implements EventoDao {
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         } catch (Exception e) {
-            throw new CustomException("Erro ao buscar evento por nome: " + e.getMessage());
+            throw new CustomException(CustomException.ERRO_BUSCAR_POR_NOME + e.getMessage());
         }
     }
 
@@ -97,7 +97,7 @@ class EventoDaoImpl implements EventoDao {
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         } catch (Exception e) {
-            throw new CustomException("Erro ao buscar evento por ID: " + e.getMessage());
+            throw new CustomException(CustomException.ERRO_BUSCAR_POR_ID+ e.getMessage());
         }
     }
 
@@ -109,13 +109,13 @@ class EventoDaoImpl implements EventoDao {
         try {
             return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(EventoModel.class));
         } catch (Exception e) {
-            throw new CustomException("Erro ao listar eventos: " + e.getMessage());
+            throw new CustomException(CustomException.ERRO_LISTAR_TODOS + e.getMessage());
         }
     }
 
     @Override
     @Transactional
-    public void deleteById(Integer idEvento) {
+    public void deletarPorId(Integer idEvento) {
         String sql = "SELECT deletar_evento(?)";
         try {
             jdbcTemplate.execute(sql, (PreparedStatementCallback<Void>) ps -> {
@@ -124,7 +124,7 @@ class EventoDaoImpl implements EventoDao {
                 return null;
             });
         } catch (Exception e) {
-            throw new CustomException("Erro ao deletar evento: " + e.getMessage());
+            throw new CustomException(CustomException.ERRO_EXCLUIR + e.getMessage());
         }
     }
 

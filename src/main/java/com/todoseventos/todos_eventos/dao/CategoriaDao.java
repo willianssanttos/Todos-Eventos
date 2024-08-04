@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface CategoriaDao {
-    CategoriaModel findById(Integer idCategoria);
-    CategoriaModel findNomeCategoria(String nomeCategoria);
+    CategoriaModel procurarId(Integer idCategoria);
+    CategoriaModel buscarNomeCategoria(String nomeCategoria);
 }
 
 @Repository
@@ -21,23 +21,23 @@ class CategoriaDaoImpl implements CategoriaDao {
 
     @Override
     @Transactional
-    public CategoriaModel findById(Integer idCategoria) {
+    public CategoriaModel procurarId(Integer idCategoria) {
         String sql = "SELECT * FROM procurar_categoria_por_id(?)";
         try {
             return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(CategoriaModel.class), idCategoria);
         } catch (Exception e) {
-            throw new CustomException("Erro ao buscar categoria por ID: " + e.getMessage());
+            throw new CustomException(CustomException.ERRO_BUSCAR_POR_ID + e.getMessage());
         }
     }
 
     @Override
     @Transactional
-    public CategoriaModel findNomeCategoria(String nomeCategoria) {
+    public CategoriaModel buscarNomeCategoria(String nomeCategoria) {
         String sql = "SELECT * FROM procurar_categoria_por_nome(?)";
         try {
             return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(CategoriaModel.class), nomeCategoria);
         } catch (Exception e) {
-            throw new CustomException("Erro ao buscar categoria por nome: " + e.getMessage());
+            throw new CustomException(CustomException.ERRO_BUSCAR_POR_NOME + e.getMessage());
         }
     }
 }

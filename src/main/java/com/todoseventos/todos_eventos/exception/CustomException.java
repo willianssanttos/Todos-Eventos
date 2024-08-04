@@ -3,7 +3,7 @@ package com.todoseventos.todos_eventos.exception;
 public class CustomException extends RuntimeException {
 
     public static final String EVENTO_NAO_ENCONTRADO = "Evento não encontrado!";
-    public static final String ENDERECO_NAO_ENCONTRADO = "Endereço não encontrado para o evento: ";
+    public static final String ENDERECO_NAO_ENCONTRADO = "Endereço não encontrado: ";
     public static final String PESSOA_FISICA_NAO_ENCONTRADA = "Pessoa Física não encontrada!";
     public static final String PESSOA_JURIDICA_NAO_ENCONTRADA = "Pessoa Jurídica não encontrada!";
     public static final String CPF_OU_CNPJ_NAO_INFORMADOS = "CPF ou CNPJ devem ser informados!";
@@ -23,6 +23,31 @@ public class CustomException extends RuntimeException {
     public static final String CNPJ_JA_CADASTRADO = "CNPJ já cadastrado!";
     public static final String IDENTIFICADOR_INVALIDO = "Identificador inválido!";
     public static final String CLIENTE_NAO_ENCONTRADO = "Cliente não encontrado!";
+    public static final String PARTICIPACAO_NAO_ENCONTRADO_POR_ID = "Erro ao buscar participações por ID:";
+    public static final String ERRO_SALVAR_PARTICIPACAO = "Erro ao salvar Participacao:";
+    public static final String ERRO_ATUALIZAR_PARTICIPACAO = "Erro ao atualizar participação:";
+
+    public static final String ERRO_BUSCAR_CLIENTE_CPF = "Erro ao buscar cliente por CPF:";
+
+    public static final String ERRO_BUSCAR_CLIENTE_CNPJ = "Erro ao buscar cliente por CNPJ:";
+
+    public static final String ERRO_ATUALIZAR_CLIENTE = "Erro ao atualizar cliente:";
+
+    public static final String ERRO_BUSCAR_USUARIO_POR_EMAIL = "Erro ao buscar usuário por E-MAIL:";
+
+    public static final String ERRO_SALVAR_CLIENTE = "Erro ao salvar cliente:";
+
+    public static final String ERRO_LISTAR_TODOS = "Erro ao listar todos:";
+
+    public static final String ERRO_SALVAR = "Erro ao salvar:";
+
+    public static final String ERRO_ATUALIZAR = "Erro ao atualizar:";
+
+    public static final String ERRO_EXCLUIR = "Erro ao excluir:";
+
+    public static final String ERRO_BUSCAR_POR_ID = "Erro ao buscar por id:";
+
+    public static final String ERRO_BUSCAR_POR_NOME = "Erro ao buscar por nome:";
 
     public CustomException(String message){
         super(message);

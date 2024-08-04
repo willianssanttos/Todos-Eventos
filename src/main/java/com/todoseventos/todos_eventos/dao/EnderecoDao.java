@@ -2,8 +2,6 @@ package com.todoseventos.todos_eventos.dao;
 
 import com.todoseventos.todos_eventos.exception.CustomException;
 import com.todoseventos.todos_eventos.model.evento.EnderecoModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -17,23 +15,21 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 public interface EnderecoDao {
-    EnderecoModel save(EnderecoModel endereco);
-    EnderecoModel update(EnderecoModel endereco);
+    EnderecoModel salverEndereco(EnderecoModel endereco);
+    EnderecoModel atualizarEndereco(EnderecoModel endereco);
     Optional<EnderecoModel> procurarPorIdEvento(Integer id);
-    void deleteByIdEvento(Integer idEvento);
+    void deletarPorIdEvento(Integer idEvento);
 }
 
 @Repository
 class EnderecoDaoImpl implements EnderecoDao {
-
-    private static final Logger logger = LoggerFactory.getLogger(EnderecoDaoImpl.class);
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Override
     @Transactional
-    public EnderecoModel save(EnderecoModel endereco) {
+    public EnderecoModel salverEndereco(EnderecoModel endereco) {
         String sql = "SELECT inserir_endereco(?, ?, ?, ?, ?, ?, ?)";
         try {
             jdbcTemplate.execute(sql, (PreparedStatementCallback<Void>) ps -> {
@@ -43,14 +39,14 @@ class EnderecoDaoImpl implements EnderecoDao {
             });
             return endereco;
         } catch (Exception e) {
-            throw new CustomException("Erro ao salvar endereço: " + e.getMessage());
+            throw new CustomException(CustomException.ERRO_SALVAR + e.getMessage());
         }
     }
 
 
     @Override
     @Transactional
-    public EnderecoModel update(EnderecoModel endereco) {
+    public EnderecoModel atualizarEndereco(EnderecoModel endereco) {
         String sql = "SELECT atualizar_endereco(?, ?, ?, ?, ?, ?, ?)";
         try {
             jdbcTemplate.execute(sql, (PreparedStatementCallback<Void>) ps -> {
@@ -60,7 +56,7 @@ class EnderecoDaoImpl implements EnderecoDao {
             });
             return endereco;
         } catch (Exception e) {
-            throw new CustomException("Erro ao atualizar endereço: " + e.getMessage());
+            throw new CustomException(CustomException.ERRO_ATUALIZAR + e.getMessage());
         }
     }
 
@@ -73,13 +69,13 @@ class EnderecoDaoImpl implements EnderecoDao {
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         } catch (Exception e) {
-            throw new CustomException("Erro ao buscar endereço por ID: " + e.getMessage());
+            throw new CustomException(CustomException.ENDERECO_NAO_ENCONTRADO + e.getMessage());
         }
     }
 
     @Override
     @Transactional
-    public void deleteByIdEvento(Integer idEvento) {
+    public void deletarPorIdEvento(Integer idEvento) {
         String sql = "SELECT deletar_endereco(?)";
         try {
             jdbcTemplate.execute(sql, (PreparedStatementCallback<Void>) ps -> {
@@ -88,7 +84,7 @@ class EnderecoDaoImpl implements EnderecoDao {
                 return null;
             });
         } catch (Exception e) {
-            throw new CustomException("Erro ao deletar endereço: " + e.getMessage());
+            throw new CustomException(CustomException.ERRO_EXCLUIR + e.getMessage());
         }
     }
 

@@ -17,10 +17,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface ParticipacaoDao {
-    ParticipacaoModel save(ParticipacaoModel participacao);
-    ParticipacaoModel update(ParticipacaoModel participacao);
-    ParticipacaoModel findById(Integer idParticipacao);
-    List<ParticipacaoModel> findByIdEvento(Integer idEvento);
+    ParticipacaoModel salvarParticipacao(ParticipacaoModel participacao);
+    ParticipacaoModel atualizarParticipacao(ParticipacaoModel participacao);
+    ParticipacaoModel localizarPorId(Integer idParticipacao);
+    List<ParticipacaoModel> localizarPorIdEvento(Integer idEvento);
 }
 
 @Repository
@@ -33,7 +33,7 @@ class ParticipacaoDaoImpl implements ParticipacaoDao {
 
     @Override
     @Transactional
-    public ParticipacaoModel save(ParticipacaoModel participacao) {
+    public ParticipacaoModel salvarParticipacao(ParticipacaoModel participacao) {
         String sql = "SELECT inserir_participacao(?, ?, ?, ?)";
         try {
             jdbcTemplate.execute(sql, (PreparedStatementCallback<Void>) ps -> {
@@ -46,13 +46,13 @@ class ParticipacaoDaoImpl implements ParticipacaoDao {
             logger.info("Participação salva com ID: {}", idParticipacao);
             return participacao;
         } catch (Exception e) {
-            throw new CustomException("Erro ao salvar Participacao: " + e.getMessage());
+            throw new CustomException(CustomException.ERRO_SALVAR_PARTICIPACAO + e.getMessage());
         }
     }
 
     @Override
     @Transactional
-    public ParticipacaoModel update(ParticipacaoModel participacao) {
+    public ParticipacaoModel atualizarParticipacao(ParticipacaoModel participacao) {
         String sql = "SELECT atualizar_participacao(?, ?)";
         logger.info("Executando SQL para atualizar participação: {}", sql);
         try {
@@ -65,13 +65,13 @@ class ParticipacaoDaoImpl implements ParticipacaoDao {
             logger.info("Participação atualizada com ID: {}", participacao.getIdParticipacao());
             return participacao;
         } catch (Exception e) {
-            throw new CustomException("Erro ao atualizar participação: " + e.getMessage());
+            throw new CustomException(CustomException.ERRO_ATUALIZAR_PARTICIPACAO + e.getMessage());
         }
     }
 
     @Override
     @Transactional
-    public ParticipacaoModel findById(Integer idParticipacao) {
+    public ParticipacaoModel localizarPorId(Integer idParticipacao) {
         String sql = "SELECT * FROM procurar_participacao_por_id(?)";
         logger.info("Executando SQL para buscar participação por ID: {}", sql);
         try {
@@ -80,18 +80,19 @@ class ParticipacaoDaoImpl implements ParticipacaoDao {
             logger.warn("Nenhuma participação encontrada com ID: {}", idParticipacao);
             return null;
         } catch (Exception e) {
-            throw new CustomException("Erro ao buscar participação por ID: " + e.getMessage());
+            throw new CustomException(CustomException.PARTICIPACAO_NAO_ENCONTRADO_POR_ID + e.getMessage());
         }
     }
 
     @Override
     @Transactional
-    public List<ParticipacaoModel> findByIdEvento(Integer idEvento) {
+    public List<ParticipacaoModel> localizarPorIdEvento(Integer idEvento) {
         String sql = "SELECT * FROM procurar_participacoes_por_id_evento(?)";
         try {
             return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(ParticipacaoModel.class), idEvento);
         } catch (Exception e) {
-            throw new CustomException("Erro ao buscar participações por ID do evento: " + e.getMessage());
+            logger.warn("Nenhuma participaçao encontrda");
+            throw new CustomException(CustomException.PARTICIPACAO_NAO_ENCONTRADO_POR_ID + e.getMessage());
         }
     }
 

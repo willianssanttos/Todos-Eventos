@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface TipoClienteDao {
-    TipoClienteModel findByNomeTipoPessoa(String nomeTipoPessoa);
+    TipoClienteModel buscarPorNomeTipoPessoa(String nomeTipoPessoa);
 }
 @Repository
 class TipoClienteDaoImpl implements TipoClienteDao{
@@ -19,12 +19,12 @@ class TipoClienteDaoImpl implements TipoClienteDao{
 
     @Override
     @Transactional
-    public TipoClienteModel findByNomeTipoPessoa(String nomeTipoPessoa) {
+    public TipoClienteModel buscarPorNomeTipoPessoa(String nomeTipoPessoa) {
         String sql = "SELECT * FROM procurar_tipo_cliente_por_nome(?)";
         try {
             return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(TipoClienteModel.class), nomeTipoPessoa);
         } catch (Exception e) {
-            throw new CustomException("Erro ao buscar tipo de cliente por nome: " + e.getMessage());
+            throw new CustomException(CustomException.ERRO_BUSCAR_POR_NOME + e.getMessage());
         }
     }
 }

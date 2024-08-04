@@ -10,9 +10,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface ClienteJuridicaDao {
-    ClienteJuridicaModel save(ClienteJuridicaModel pessoaJuridica);
-    ClienteJuridicaModel update(ClienteJuridicaModel pessoaJuridica);
-    ClienteJuridicaModel findByCnpj(String cnpj);
+    ClienteJuridicaModel salvarCliJuridico(ClienteJuridicaModel pessoaJuridica);
+    ClienteJuridicaModel atualizarJuridico(ClienteJuridicaModel pessoaJuridica);
+    ClienteJuridicaModel procurarCnpj(String cnpj);
 }
 @Repository
 class ClienteJuridicaDaoImpl implements ClienteJuridicaDao{
@@ -22,7 +22,7 @@ class ClienteJuridicaDaoImpl implements ClienteJuridicaDao{
 
     @Override
     @Transactional
-    public ClienteJuridicaModel save(ClienteJuridicaModel pessoaJuridica) {
+    public ClienteJuridicaModel salvarCliJuridico(ClienteJuridicaModel pessoaJuridica) {
         String sql = "SELECT inserir_cliente_juridico(?, ?)";
         try {
             jdbcTemplate.execute(sql, (PreparedStatementCallback<Void>) ps -> {
@@ -33,13 +33,13 @@ class ClienteJuridicaDaoImpl implements ClienteJuridicaDao{
             });
             return pessoaJuridica;
         } catch (Exception e) {
-            throw new CustomException("Erro ao salvar cliente jurídico: " + e.getMessage());
+            throw new CustomException(CustomException.ERRO_SALVAR + e.getMessage());
         }
     }
 
     @Override
     @Transactional
-    public ClienteJuridicaModel update(ClienteJuridicaModel pessoaJuridica) {
+    public ClienteJuridicaModel atualizarJuridico(ClienteJuridicaModel pessoaJuridica) {
         String sql = "SELECT atualizar_cliente_juridico(?, ?)";
         try {
             jdbcTemplate.execute(sql, (PreparedStatementCallback<Void>) ps -> {
@@ -50,18 +50,18 @@ class ClienteJuridicaDaoImpl implements ClienteJuridicaDao{
             });
             return pessoaJuridica;
         } catch (Exception e) {
-            throw new CustomException("Erro ao atualizar cliente jurídico: " + e.getMessage());
+            throw new CustomException(CustomException.ERRO_ATUALIZAR + e.getMessage());
         }
     }
 
     @Override
     @Transactional
-    public ClienteJuridicaModel findByCnpj(String cnpj) {
+    public ClienteJuridicaModel procurarCnpj(String cnpj) {
         String sql = "SELECT * FROM procurar_cliente_juridico_por_cnpj(?)";
         try {
             return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ClienteJuridicaModel.class), cnpj);
         } catch (Exception e) {
-            throw new CustomException("Erro ao buscar cliente jurídico por CNPJ: " + e.getMessage());
+            throw new CustomException(CustomException.ERRO_BUSCAR_CLIENTE_CNPJ + e.getMessage());
         }
     }
 }
