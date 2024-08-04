@@ -32,11 +32,11 @@ public class EventoController {
     public ResponseEntity<CustomExceptionResponse> cadastrarEvento(@RequestBody EventoRequest eventoRequest) {
         try {
             EventoResponse response = eventoService.cadastrarNovoEvento(eventoRequest);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new CustomExceptionResponse("Cadastro realizado com sucesso. Seu evento já está em divulgação!", response));
+            return ResponseEntity.status(HttpStatus.CREATED).body(new CustomExceptionResponse(CustomException.CADASTRO_EVENTO, response));
         } catch (CustomException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CustomExceptionResponse(e.getMessage(), null));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse("Erro interno do servidor ao realizar cadastro", null));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse(CustomException.ERRO_INTERNO, null));
         }
     }
 
@@ -50,11 +50,11 @@ public class EventoController {
     public ResponseEntity<CustomExceptionResponse> encerrarEvento(@PathVariable Integer idEvento) {
         try {
             EventoResponse response = eventoService.encerrarEvento(idEvento);
-            return ResponseEntity.status(HttpStatus.OK).body(new CustomExceptionResponse("Evento encerrado com sucesso!", response));
+            return ResponseEntity.status(HttpStatus.OK).body(new CustomExceptionResponse(CustomException.EVENTO_ENCERRADO, response));
         } catch (CustomException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CustomExceptionResponse(e.getMessage(), null));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse("Erro interno do servidor ao encerrar evento!", null));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse(CustomException.ERRO_INTERNO, null));
         }
     }
 
@@ -67,9 +67,9 @@ public class EventoController {
     public ResponseEntity<CustomExceptionResponse> listarEventos() {
         try {
             List<EventoResponse> response = eventoService.localizarEventos();
-            return ResponseEntity.status(HttpStatus.OK).body(new CustomExceptionResponse("Lista de eventos recuperada com sucesso!", response));
+            return ResponseEntity.status(HttpStatus.OK).body(new CustomExceptionResponse(CustomException.LISTA_EVENTO, response));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse("Erro interno do servidor ao listar eventos", null));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse(CustomException.ERRO_INTERNO, null));
         }
     }
 
@@ -83,11 +83,11 @@ public class EventoController {
     public ResponseEntity<CustomExceptionResponse> procurarEventoPorNome(@PathVariable String nomeEvento) {
         try {
             EventoResponse response = eventoService.procurarEventoPorNome(nomeEvento);
-            return ResponseEntity.status(HttpStatus.OK).body(new CustomExceptionResponse("Evento encontrado com sucesso!", response));
+            return ResponseEntity.status(HttpStatus.OK).body(new CustomExceptionResponse(CustomException.EVENTO_ENCONTRADO, response));
         } catch (CustomException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CustomExceptionResponse(e.getMessage(), null));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse("Erro interno do servidor ao procurar evento", null));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse(CustomException.ERRO_INTERNO, null));
         }
     }
 
@@ -101,11 +101,11 @@ public class EventoController {
     public ResponseEntity<CustomExceptionResponse> atualizarEvento(@PathVariable String nomeEvento, @RequestBody EventoRequest eventoRequest) {
         try {
             EventoResponse response = eventoService.atualizarEvento(nomeEvento, eventoRequest);
-            return ResponseEntity.status(HttpStatus.OK).body(new CustomExceptionResponse("Evento atualizado com sucesso!", response));
+            return ResponseEntity.status(HttpStatus.OK).body(new CustomExceptionResponse(CustomException.EVENTO_ATUALIZADO, response));
         } catch (CustomException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CustomExceptionResponse(e.getMessage(), null));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse("Erro interno do servidor ao atualizar evento", null));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse(CustomException.ERRO_INTERNO, null));
         }
     }
 
@@ -119,11 +119,11 @@ public class EventoController {
     public ResponseEntity<CustomExceptionResponse> excluirEvento(@PathVariable Integer idEvento) {
         try {
             eventoService.excluirEvento(idEvento);
-            return ResponseEntity.status(HttpStatus.OK).body(new CustomExceptionResponse("Evento excluído com sucesso!", null));
+            return ResponseEntity.status(HttpStatus.OK).body(new CustomExceptionResponse(CustomException.EXCLUIR_EVENTO, null));
         } catch (CustomException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CustomExceptionResponse(e.getMessage(), null));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse("Erro interno do servidor ao excluir evento", null));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse(CustomException.ERRO_INTERNO, null));
         }
     }
 }

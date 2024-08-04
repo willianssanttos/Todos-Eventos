@@ -31,11 +31,11 @@ public class ParticipacaoController {
     public ResponseEntity<CustomExceptionResponse> inscreverParticipante(@RequestBody ParticipacaoRequest request) {
         try {
             ParticipacaoResponse response = participacaoService.inscreverParticipante(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new CustomExceptionResponse("Inscrição realizada com sucesso!", response));
+            return ResponseEntity.status(HttpStatus.CREATED).body(new CustomExceptionResponse(CustomException.INSCRICAO, response));
         } catch (CustomException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CustomExceptionResponse(e.getMessage(), null));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse("Erro interno do servidor ao realizar inscrição", null));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse(CustomException.ERRO_INTERNO, null));
         }
     }
 
@@ -49,11 +49,11 @@ public class ParticipacaoController {
     public ResponseEntity<CustomExceptionResponse> confirmarParticipacao(@PathVariable Integer idParticipacao) {
         try {
             ParticipacaoResponse response = participacaoService.confirmarParticipacao(idParticipacao);
-            return ResponseEntity.status(HttpStatus.OK).body(new CustomExceptionResponse("Participação no evento confirmada com sucesso!", response));
+            return ResponseEntity.status(HttpStatus.OK).body(new CustomExceptionResponse(CustomException.CONFIRMACAO_INSCRICAO, response));
         } catch (CustomException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CustomExceptionResponse(e.getMessage(), null));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse("Erro interno do servidor ao confirmar participação!", null));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse(CustomException.ERRO_INTERNO, null));
         }
     }
 }

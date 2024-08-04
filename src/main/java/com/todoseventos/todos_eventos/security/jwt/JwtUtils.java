@@ -1,5 +1,6 @@
 package com.todoseventos.todos_eventos.security.jwt;
 
+import com.todoseventos.todos_eventos.exception.CustomException;
 import com.todoseventos.todos_eventos.usecase.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -63,14 +64,13 @@ public class JwtUtils {
             Jwts.parser().setSigningKey(getSigninKey()).build().parseClaimsJws(authToken);
             return true;
         } catch (MalformedJwtException e) {
-            System.out.println("Token inválido " + e.getMessage());
+           throw new CustomException ("Token inválido " + e.getMessage());
         } catch (ExpiredJwtException e) {
-            System.out.println("Token expirado " + e.getMessage());
+            throw new CustomException("Token expirado " + e.getMessage());
         }catch (UnsupportedJwtException e) {
-            System.out.println("Token não suportado " + e.getMessage());
+            throw new CustomException("Token não suportado " + e.getMessage());
         }catch (IllegalArgumentException e) {
-            System.out.println("Token Argumento invalido " + e.getMessage());
+            throw new CustomException("Token Argumento invalido " + e.getMessage());
         }
-        return false;
     }
 }

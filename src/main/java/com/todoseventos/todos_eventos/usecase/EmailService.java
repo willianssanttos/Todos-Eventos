@@ -1,5 +1,6 @@
 package com.todoseventos.todos_eventos.usecase;
 
+import com.todoseventos.todos_eventos.exception.CustomException;
 import com.todoseventos.todos_eventos.model.evento.EnderecoModel;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -34,7 +35,7 @@ public class EmailService {
 
             emailSender.send(mimeMessage);
         } catch (MessagingException e) {
-            throw new RuntimeException("Erro ao enviar email", e);
+            throw new CustomException(CustomException.ERRO_ENVIAR_EMAIL);
         }
     }
 
@@ -79,7 +80,7 @@ public class EmailService {
 
             emailSender.send(mimeMessage);
         } catch (MessagingException e) {
-            throw new RuntimeException("Erro ao enviar email de confirmação", e);
+            throw new CustomException(CustomException.ERRO_ENVIAR_EMAIL_CONFIRMACAO);
         }
     }
 
@@ -121,7 +122,7 @@ public class EmailService {
 
             emailSender.send(mimeMessage);
         } catch (MessagingException e) {
-            throw new RuntimeException("Erro ao enviar email de cancelamento", e);
+            throw new CustomException(CustomException.ERRO_ENVIAR_EMAIL_CANCELAMENTO);
         }
     }
 

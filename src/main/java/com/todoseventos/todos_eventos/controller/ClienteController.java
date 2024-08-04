@@ -31,11 +31,11 @@ public class ClienteController {
     public ResponseEntity<CustomExceptionResponse> postPessoa(@RequestBody ClienteRequest clienteRequest) {
         try {
             ClienteResponse response = clienteService.cadastrarNovaPessoa(clienteRequest);
-            return ResponseEntity.ok(new CustomExceptionResponse("Cliente cadastrado com sucesso!", response));
+            return ResponseEntity.ok(new CustomExceptionResponse(CustomException.CADASTRO_CLIENTE, response));
         } catch (CustomException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CustomExceptionResponse(e.getMessage(), null));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse("Erro interno do servidor ao realizar cadastro", null));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse(CustomException.ERRO_INTERNO, null));
         }
     }
 
@@ -56,11 +56,11 @@ public class ClienteController {
             } else {
                 throw new CustomException(CustomException.IDENTIFICADOR_INVALIDO);
             }
-            return ResponseEntity.ok(new CustomExceptionResponse("Cliente encontrado!", pessoa));
+            return ResponseEntity.ok(new CustomExceptionResponse(CustomException.CLIENTE_ENCONTRADO, pessoa));
         } catch (CustomException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CustomExceptionResponse(e.getMessage(), null));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse("Erro interno do servidor ao buscar cliente", null));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse(CustomException.ERRO_INTERNO, null));
         }
     }
 
@@ -73,9 +73,9 @@ public class ClienteController {
     public ResponseEntity<CustomExceptionResponse> getPessoa() {
         try {
             List<ClienteResponse> response = clienteService.listarPessoas();
-            return ResponseEntity.ok(new CustomExceptionResponse("Lista de clientes recuperada com sucesso!", response));
+            return ResponseEntity.ok(new CustomExceptionResponse(CustomException.LISTA_CLIENTE, response));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse("Erro interno do servidor ao listar clientes", null));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse(CustomException.ERRO_INTERNO, null));
         }
     }
 
@@ -89,11 +89,11 @@ public class ClienteController {
     public ResponseEntity<CustomExceptionResponse> putPessoa(@PathVariable("identificador") String identificador, @RequestBody ClienteRequest clienteRequest) {
         try {
             ClienteResponse response = clienteService.atualizarPessoa(identificador, clienteRequest);
-            return ResponseEntity.ok(new CustomExceptionResponse("Cliente atualizado com sucesso!", response));
+            return ResponseEntity.ok(new CustomExceptionResponse(CustomException.CLIENTE_ATUALIZADO, response));
         } catch (CustomException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CustomExceptionResponse(e.getMessage(), null));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse("Erro interno ao atualizar cliente", null));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomExceptionResponse(CustomException.ERRO_INTERNO, null));
         }
     }
 }

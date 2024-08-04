@@ -51,10 +51,10 @@ public class AutenticacaoService {
             return new AcessDTO(jwt);
         } catch (BadCredentialsException e) {
             // Lança uma exceção personalizada se as credenciais forem inválidas
-            throw new CustomException("Email ou senha inválidos.");
+            throw new CustomException(CustomException.EMIAL_SENHA);
         } catch (Exception e) {
             // Lança uma exceção personalizada se ocorrer um erro interno
-            throw new CustomException("Ocorreu um erro interno. Por favor, tente novamente mais tarde.");
+            throw new CustomException(CustomException.ERRO_INTERNO);
         }
     }
 }

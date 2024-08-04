@@ -29,7 +29,7 @@ public class ExcecoesController {
     })
     @ExceptionHandler(Exception.class)
     public ResponseEntity<CustomExceptionResponse> handleGenericException(Exception ex) {
-        CustomExceptionResponse response = new CustomExceptionResponse("Ocorreu um erro interno. Por favor, tente novamente mais tarde.", null);
+        CustomExceptionResponse response = new CustomExceptionResponse(CustomException.ERRO_INTERNO, null);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

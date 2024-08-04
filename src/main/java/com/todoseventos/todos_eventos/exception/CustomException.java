@@ -49,6 +49,28 @@ public class CustomException extends RuntimeException {
 
     public static final String ERRO_BUSCAR_POR_NOME = "Erro ao buscar por nome:";
 
+    public static final String ERRO_ENVIAR_EMAIL = "Erro ao enviar e-mail:";
+    public static final String ERRO_ENVIAR_EMAIL_CONFIRMACAO = "Erro ao enviar e-mail de confirmação:";
+    public static final String ERRO_ENVIAR_EMAIL_CANCELAMENTO = "Erro ao enviar e-mail de cancelamento:";
+    public static final String EMIAL_SENHA = "Email ou senha inválidos!";
+    public static final String ERRO_INTERNO = "Ocorreu um erro interno. Por favor, tente novamente mais tarde.";
+
+    public static final String INSCRICAO = "Inscrição realizada com sucesso!";
+
+    public static final String CONFIRMACAO_INSCRICAO = "Participação no evento confirmada com sucesso!";
+
+    public static final String CADASTRO_EVENTO = "Cadastro realizado com sucesso. Seu evento já está em divulgação!";
+    public static final String EVENTO_ENCERRADO = "Evento encerrado com sucesso!";
+    public static final String LISTA_EVENTO = "Lista de eventos recuperada com sucesso!";
+    public static final String EVENTO_ENCONTRADO = "Evento encontrado com sucesso!";
+    public static final String EVENTO_ATUALIZADO = "Evento atualizado com sucesso!";
+    public static final String EXCLUIR_EVENTO = "Evento excluído com sucesso";
+
+    public static final String CADASTRO_CLIENTE = "Cliente cadastrado com sucesso!";
+    public static final String CLIENTE_ENCONTRADO = "Cliente encontrado!";
+    public static final String LISTA_CLIENTE = "Lista de clientes recuperada com sucesso!";
+    public static final String CLIENTE_ATUALIZADO = "Cliente atualizado com sucesso!!";
+
     public CustomException(String message){
         super(message);
     }

@@ -35,7 +35,7 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
         // Cria um mapa para armazenar os detalhes do erro
         final Map<String, Object> body = new HashMap<>();
         body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
-        body.put("error", "Unauthorized");
+        body.put("error", "Não autorizado");
 
         // Converte o mapa em JSON e escreve na resposta
         final ObjectMapper mapper = new ObjectMapper();

@@ -61,7 +61,7 @@ public class AuthFilterToken extends OncePerRequestFilter {
      * @return O token JWT, ou null se não estiver presente.
      */
     private String getToken(HttpServletRequest request) {
-        String headerToken = request.getHeader("Authorization");
+        String headerToken = request.getHeader("Autorização");
         if(StringUtils.hasText(headerToken) && headerToken.startsWith("Bearer")) {
             return headerToken.replace("Bearer ","");
         }
