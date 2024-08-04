@@ -12,6 +12,7 @@ O projeto **Todos Eventos** é um sistema de gerenciamento de eventos que permit
 - Cadastro de eventos
 - Consulta de eventos
 - Participação em eventos
+- Manipulção da base de dados por functions
 - Cancelamento de participação em eventos
 - Consumo de APIs externas para obtenção de endereço e envio de e-mails
 
