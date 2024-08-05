@@ -31,7 +31,7 @@ public class ClienteController {
     public ResponseEntity<CustomExceptionResponse> postPessoa(@RequestBody ClienteRequest clienteRequest) {
         try {
             ClienteResponse response = clienteService.cadastrarNovaPessoa(clienteRequest);
-            return ResponseEntity.ok(new CustomExceptionResponse(CustomException.CADASTRO_CLIENTE, response));
+            return ResponseEntity.ok(new CustomExceptionResponse(CustomException.CADASTRO_CLIENTE, null));
         } catch (CustomException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CustomExceptionResponse(e.getMessage(), null));
         } catch (Exception e) {
