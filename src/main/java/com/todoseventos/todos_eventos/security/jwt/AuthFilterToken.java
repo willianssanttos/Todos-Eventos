@@ -1,11 +1,12 @@
 package com.todoseventos.todos_eventos.security.jwt;
 
-import com.todoseventos.todos_eventos.exception.CustomException;
-import com.todoseventos.todos_eventos.usecase.DetalheUsuarioServiceImpl;
+import com.todoseventos.todos_eventos.usecase.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,52 +20,42 @@ import java.io.IOException;
 public class AuthFilterToken extends OncePerRequestFilter {
 
     @Autowired
-    private JwtUtils jwtUtil;
+    private JwtUtils jwtUtils;
 
     @Autowired
-    private DetalheUsuarioServiceImpl userDetailService;
+    private UserDetailsServiceImpl userDetailsService;
 
-    /**
-     * Filtra cada requisição para verificar a presença de um token JWT válido.
-     * @param request O objeto HttpServletRequest.
-     * @param response O objeto HttpServletResponse.
-     * @param filterChain O objeto FilterChain.
-     * @throws ServletException se ocorrer um erro de servlet.
-     * @throws IOException se ocorrer um erro de I/O.
-     */
+    private static final Logger logger = LoggerFactory.getLogger(AuthFilterToken.class);
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         try {
-            String jwt = getToken(request);
-            if(jwt != null && jwtUtil.validateJwtToken(jwt)) {
+            String jwt = parseJwt(request);
+            if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
+                String email = jwtUtils.getUserNameFromJwtToken(jwt);
 
-                String username = jwtUtil.getUsernameToken(jwt);
+                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                UserDetails userDetails = userDetailService.loadUserByUsername(username);
-                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails,  null, userDetails.getAuthorities());
-                auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                SecurityContextHolder.getContext().setAuthentication(auth);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-
-        }catch(Exception e) {
-            throw new CustomException("Ocorreu um erro ao proecssar o token.");
+        } catch (Exception e) {
+            logger.error("Não foi possível autenticar o usuário: {}", e.getMessage());
         }
 
         filterChain.doFilter(request, response);
     }
 
-    /**
-     * Obtém o token JWT do cabeçalho da requisição.
-     * @param request O objeto HttpServletRequest.
-     * @return O token JWT, ou null se não estiver presente.
-     */
-    private String getToken(HttpServletRequest request) {
-        String headerToken = request.getHeader("Autorização");
-        if(StringUtils.hasText(headerToken) && headerToken.startsWith("Bearer")) {
-            return headerToken.replace("Bearer ","");
+    private String parseJwt(HttpServletRequest request) {
+        String headerAuth = request.getHeader("Authorization");
+
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+            return headerAuth.substring(7);
         }
+
         return null;
     }
 }

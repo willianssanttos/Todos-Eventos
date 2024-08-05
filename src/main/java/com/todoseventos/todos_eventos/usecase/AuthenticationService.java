@@ -10,21 +10,16 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AutenticacaoService {
+public class AuthenticationService {
 
     @Autowired
     private AuthenticationManager authenticationManager;
 
     @Autowired
     private JwtUtils jwtUtils;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     /**
      * Realiza o login do usuário.
@@ -42,10 +37,8 @@ public class AutenticacaoService {
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            // Obtém os detalhes do usuário autenticado
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            // Gera um token JWT com base nos detalhes do usuário
-            String jwt = jwtUtils.generateTokenFromUserDetailsImpl((UserDetailsImpl) userDetails);
+            // Gera um token JWT com base na autenticação
+            String jwt = jwtUtils.generateJwtToken(authentication);
 
             // Retorna o token JWT
             return new AcessDTO(jwt);

@@ -27,7 +27,7 @@ public class ClienteController {
             @ApiResponse(responseCode = "417", description = "Erro ao realizar o cadastro!"),
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor ao realizar cadastro!")
     })
-    @PostMapping("/pessoa")
+    @PostMapping("/cliente")
     public ResponseEntity<CustomExceptionResponse> postPessoa(@RequestBody ClienteRequest clienteRequest) {
         try {
             ClienteResponse response = clienteService.cadastrarNovaPessoa(clienteRequest);

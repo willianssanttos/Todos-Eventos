@@ -2,15 +2,15 @@ package com.todoseventos.todos_eventos.dto;
 
 public enum CategoriaEnum {
     Tecnologia,
-    Saúde,
+    Saude,
     Cultura,
-    Negócios,
+    Negocios,
     Sustentabilidade,
-    Educação,
+    Educacao,
     Marketing,
     Workshop,
     Turismo,
-    Música,
+    Musica,
     Outros,
 
 }

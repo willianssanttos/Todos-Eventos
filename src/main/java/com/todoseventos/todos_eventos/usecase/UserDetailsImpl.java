@@ -22,7 +22,6 @@ public class UserDetailsImpl implements UserDetails {
      */
 
     public UserDetailsImpl(Integer id, String email, String password, Collection<? extends GrantedAuthority> authorities) {
-
         this.id = id;
         this.email = email;
         this.password = password;
@@ -55,6 +54,7 @@ public class UserDetailsImpl implements UserDetails {
      * Retorna a senha do usuário.
      * @return A senha do usuário.
      */
+
     @Override
     public String getPassword() {
         return password;
@@ -67,6 +67,14 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public String getUsername() {
         return email;
+    }
+
+    /**
+     * Retorna o ID do usuário.
+     * @return O ID do usuário.
+     */
+    public Integer getId() {
+        return id;
     }
 
     /**

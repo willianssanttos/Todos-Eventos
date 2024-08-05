@@ -69,7 +69,9 @@ public class CustomException extends RuntimeException {
     public static final String CADASTRO_CLIENTE = "Cliente cadastrado com sucesso!";
     public static final String CLIENTE_ENCONTRADO = "Cliente encontrado!";
     public static final String LISTA_CLIENTE = "Lista de clientes recuperada com sucesso!";
-    public static final String CLIENTE_ATUALIZADO = "Cliente atualizado com sucesso!!";
+    public static final String CLIENTE_ATUALIZADO = "Cliente atualizado com sucesso!";
+    public static final String TOKEN = "Não é possível definir a autenticação do usuário: {}!";
+    public static final String TOKEN_EMAIL = "Usuário não encontrado com e-mail: ";
 
     public CustomException(String message){
         super(message);
