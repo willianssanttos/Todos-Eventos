@@ -1,0 +1,16 @@
+CREATE OR REPLACE FUNCTION procurar_categoria_por_id(p_id_categoria INTEGER)
+RETURNS SETOF CATEGORIA AS $$
+BEGIN
+    RETURN QUERY
+    SELECT * FROM CATEGORIA WHERE id_categoria = p_id_categoria;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION procurar_categoria_por_nome(p_nome_categoria VARCHAR)
+RETURNS SETOF CATEGORIA AS $$
+BEGIN
+    RETURN QUERY
+    SELECT * FROM CATEGORIA WHERE nome_categoria = p_nome_categoria;
+END;
+$$ LANGUAGE plpgsql;
+

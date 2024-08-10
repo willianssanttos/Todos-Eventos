@@ -46,6 +46,5 @@ O Swagger está configurado para documentar e testar as APIs do sistema. A docum
 
 ## Scrip da base de dados e as functions
 
-- Link: https://bitbucket.org/spe-todos-ventos/script_e_fuctions_basededados/src/master/
-
+Os scripts da base de dados, functions e os endpoints para teste da aplicação, se encontra nas pastas na raiz do projeto.
 - Observção: Realizar a execução do script da base de dados primeiro, e logo apos realizar a execução dos scripts das functions

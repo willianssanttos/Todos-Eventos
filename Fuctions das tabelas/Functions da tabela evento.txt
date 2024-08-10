@@ -1,0 +1,88 @@
+CREATE OR REPLACE FUNCTION inserir_evento(
+    nome_evento VARCHAR(60),
+    dataHora_evento VARCHAR(20),
+    dataHora_eventofinal VARCHAR(20),
+    descricao VARCHAR(60),
+    status VARCHAR(20),
+    id_categoria INTEGER
+)
+RETURNS INTEGER AS $$
+DECLARE
+    new_id INTEGER;
+BEGIN
+    INSERT INTO EVENTO (nome_evento, dataHora_evento, dataHora_eventofinal, descricao, status, id_categoria)
+    VALUES (nome_evento, dataHora_evento, dataHora_eventofinal, descricao, status, id_categoria)
+    RETURNING id_evento INTO new_id;
+    RETURN new_id;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION atualizar_evento(
+    p_id_evento INTEGER,
+    p_nome_evento VARCHAR(60),
+    p_dataHora_evento VARCHAR(20),
+    p_dataHora_eventofinal VARCHAR(20),
+    p_descricao VARCHAR(60),
+    p_status VARCHAR(20),
+    p_id_categoria INTEGER
+)
+RETURNS VOID AS $$
+BEGIN
+    UPDATE EVENTO
+    SET nome_evento = p_nome_evento,
+        dataHora_evento = p_dataHora_evento,
+        dataHora_eventofinal = p_dataHora_eventofinal,
+        descricao = p_descricao,
+        status = p_status,
+        id_categoria = p_id_categoria
+    WHERE id_evento = p_id_evento;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION procurar_evento_por_nome(p_nome_evento VARCHAR(60))
+RETURNS SETOF EVENTO AS $$
+BEGIN
+    RETURN QUERY SELECT * FROM EVENTO WHERE nome_evento = p_nome_evento;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION procurar_evento_por_id(p_id_evento INTEGER)
+RETURNS SETOF EVENTO AS $$
+BEGIN
+    RETURN QUERY SELECT * FROM EVENTO WHERE id_evento = p_id_evento;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION localizar_evento()
+RETURNS TABLE(
+    id_evento INTEGER,
+    nome_evento VARCHAR(60),
+    dataHora_evento VARCHAR(20),
+    dataHora_eventofinal VARCHAR(20),
+    descricao VARCHAR(60),
+    status VARCHAR(20),
+    id_categoria INTEGER,
+    rua VARCHAR(50),
+    numero VARCHAR(50),
+    bairro VARCHAR(50),
+    cidade VARCHAR(50),
+    cep VARCHAR(10),
+    uf VARCHAR(2)
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT e.id_evento, e.nome_evento, e.dataHora_evento, e.dataHora_eventofinal, e.descricao, e.status, e.id_categoria,
+           ed.rua, ed.numero, ed.bairro, ed.cidade, ed.cep, ed.uf
+    FROM EVENTO e
+    JOIN ENDERECO ed ON e.id_evento = ed.id_evento;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION deletar_evento(p_id_evento INTEGER)
+RETURNS VOID AS $$
+BEGIN
+    DELETE FROM EVENTO WHERE id_evento = p_id_evento;
+END;
+$$ LANGUAGE plpgsql;
