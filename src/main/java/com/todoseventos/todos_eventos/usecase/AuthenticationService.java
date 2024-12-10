@@ -4,6 +4,7 @@ import com.todoseventos.todos_eventos.dto.AcessDTO;
 import com.todoseventos.todos_eventos.dto.AuthenticationDTO;
 import com.todoseventos.todos_eventos.exception.CustomException;
 import com.todoseventos.todos_eventos.security.jwt.JwtUtils;
+import com.todoseventos.todos_eventos.utils.Constantes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -44,10 +45,10 @@ public class AuthenticationService {
             return new AcessDTO(jwt);
         } catch (BadCredentialsException e) {
             // Lança uma exceção personalizada se as credenciais forem inválidas
-            throw new CustomException(CustomException.EMIAL_SENHA);
+            throw new CustomException(Constantes.EMIAL_SENHA);
         } catch (Exception e) {
             // Lança uma exceção personalizada se ocorrer um erro interno
-            throw new CustomException(CustomException.ERRO_INTERNO);
+            throw new CustomException(Constantes.ERRO_INTERNO);
         }
     }
 }

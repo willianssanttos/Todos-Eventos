@@ -1,18 +1,22 @@
 package com.todoseventos.todos_eventos.usecase;
 
-import com.todoseventos.todos_eventos.dao.ClienteDao;
-import com.todoseventos.todos_eventos.dao.ClienteFisicaDao;
-import com.todoseventos.todos_eventos.dao.ClienteJuridicaDao;
-import com.todoseventos.todos_eventos.dao.TipoClienteDao;
-import com.todoseventos.todos_eventos.dto.ClienteRequest;
-import com.todoseventos.todos_eventos.dto.ClienteResponse;
-import com.todoseventos.todos_eventos.dto.TipoClienteEnum;
-import com.todoseventos.todos_eventos.exception.CustomException;
-import com.todoseventos.todos_eventos.model.cliente.ClienteFisicaModel;
-import com.todoseventos.todos_eventos.model.cliente.ClienteJuridicaModel;
+import com.todoseventos.todos_eventos.model.cliente.ClienteFisicoModel;
+import com.todoseventos.todos_eventos.repository.cliente.ClienteRepository;
+import com.todoseventos.todos_eventos.repository.cliente.ClienteFisicaRepository;
+import com.todoseventos.todos_eventos.repository.cliente.ClienteJuridicaRepository;
+import com.todoseventos.todos_eventos.repository.cliente.TipoClienteRepository;
+import com.todoseventos.todos_eventos.dto.cliente.ClienteRequest;
+import com.todoseventos.todos_eventos.dto.cliente.ClienteResponse;
+import com.todoseventos.todos_eventos.dto.Enuns.TipoClienteEnum;
+import com.todoseventos.todos_eventos.exception.*;
+import com.todoseventos.todos_eventos.model.cliente.ClienteFisicoModel;
+import com.todoseventos.todos_eventos.model.cliente.ClienteJuridicoModel;
 import com.todoseventos.todos_eventos.model.cliente.ClienteModel;
 import com.todoseventos.todos_eventos.model.cliente.TipoClienteModel;
+import com.todoseventos.todos_eventos.utils.Constantes;
 import com.todoseventos.todos_eventos.utils.Validacoes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,19 +32,21 @@ public class ClienteService {
     private Validacoes validacoes;
 
     @Autowired
-    private ClienteDao clienteDao;
+    private ClienteRepository clienteRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private TipoClienteDao tipoClienteDao;
+    private TipoClienteRepository tipoClienteRepository;
 
     @Autowired
-    private ClienteFisicaDao clienteFisicaDao;
+    private ClienteFisicaRepository clienteFisicaRepository;
 
     @Autowired
-    private ClienteJuridicaDao clienteJuridicaDao;
+    private ClienteJuridicaRepository clienteJuridicaRepository;
+
+    private static final Logger logger = LoggerFactory.getLogger(ClienteService.class);
 
     /**
      * Cadastra uma nova pessoa (física ou jurídica).
@@ -48,48 +54,53 @@ public class ClienteService {
      * @return Um objeto de resposta contendo os detalhes da pessoa cadastrada.
      */
     public ClienteResponse cadastrarNovaPessoa(ClienteRequest clienteRequest) {
+        try {
+            if (clienteRequest.getTipo_pessoa() == null) {
+                throw new TipoCategoriaValidacaoException();
+            }
 
-        if (clienteRequest.getTipo_pessoa() == null) {
-            throw new CustomException(CustomException.TIPO_CATEGORIA_INVALIDO);
-        }
+            TipoClienteModel tipoClienteModel = tipoClienteRepository.buscarPorNomeTipoPessoa(clienteRequest.getTipo_pessoa().name());
 
-        TipoClienteModel tipoClienteModel = tipoClienteDao.buscarPorNomeTipoPessoa(clienteRequest.getTipo_pessoa().name());
+            if (Objects.isNull(tipoClienteModel)) {
+                throw new TipoCategoriaValidacaoException();
+            }
 
-        if (Objects.isNull(tipoClienteModel)) {
-            throw new CustomException(CustomException.CATEGORIA_INVALIDA);
-        }
+            validarDados(clienteRequest);
 
-        validarDados(clienteRequest);
+            clienteRequest.setTelefone(validacoes.formatarNumeroTelefone(clienteRequest.getTelefone()));
+            String encodedPassword = passwordEncoder.encode(clienteRequest.getSenha());
 
-        clienteRequest.setTelefone(validacoes.formatarNumeroTelefone(clienteRequest.getTelefone()));
-        String encodedPassword = passwordEncoder.encode(clienteRequest.getSenha());
-
-        ClienteModel pessoa = ClienteModel.builder()
-                .nome(clienteRequest.getNome())
-                .email(clienteRequest.getEmail())
-                .senha(encodedPassword)
-                .telefone(clienteRequest.getTelefone())
-                .tipo_pessoa(tipoClienteModel.getIdTipoPessoa())
-                .build();
-
-        ClienteModel pessoaSalva = clienteDao.salvarCliente(pessoa);
-
-        if (clienteRequest.getTipo_pessoa() == TipoClienteEnum.FISICA) {
-            ClienteFisicaModel pessoaFisica = ClienteFisicaModel.builder()
-                    .cpf(clienteRequest.getCpf())
-                    .dataNascimento(clienteRequest.getDataNascimento())
-                    .idPessoa(pessoaSalva.getIdPessoa())
+            ClienteModel pessoa = ClienteModel.builder()
+                    .nome(clienteRequest.getNome())
+                    .email(clienteRequest.getEmail())
+                    .senha(encodedPassword)
+                    .telefone(clienteRequest.getTelefone())
+                    .tipo_pessoa(tipoClienteModel.getIdTipoPessoa())
                     .build();
-            clienteFisicaDao.salvarCliFisico(pessoaFisica);
 
-        } else if (clienteRequest.getTipo_pessoa() == TipoClienteEnum.JURIDICA) {
-            ClienteJuridicaModel pessoaJuridica = ClienteJuridicaModel.builder()
-                    .cnpj(clienteRequest.getCnpj())
-                    .idPessoa(pessoaSalva.getIdPessoa())
-                    .build();
-            clienteJuridicaDao.salvarCliJuridico(pessoaJuridica);
+            ClienteModel pessoaSalva = clienteRepository.salvarCliente(pessoa);
+
+            if (clienteRequest.getTipo_pessoa() == TipoClienteEnum.FISICA) {
+                ClienteFisicoModel pessoaFisica = ClienteFisicoModel.builder()
+                        .cpf(clienteRequest.getCpf())
+                        .dataNascimento(clienteRequest.getDataNascimento())
+                        .idPessoa(pessoaSalva.getIdPessoa())
+                        .build();
+                clienteFisicaRepository.salvarCliFisico(pessoaFisica);
+
+            } else if (clienteRequest.getTipo_pessoa() == TipoClienteEnum.JURIDICA) {
+                ClienteJuridicoModel pessoaJuridica = ClienteJuridicoModel.builder()
+                        .cnpj(clienteRequest.getCnpj())
+                        .idPessoa(pessoaSalva.getIdPessoa())
+                        .build();
+                clienteJuridicaRepository.salvarCliJuridico(pessoaJuridica);
+            }
+            return mapearPessoa(clienteRequest.getTipo_pessoa(), pessoaSalva);
+        } catch (Exception e)
+        {
+            logger.error(Constantes.ERRO_SALVAR_CLIENTE + e.getMessage());
+            throw new ClienteException();
         }
-        return mapearPessoa(clienteRequest.getTipo_pessoa(), pessoaSalva);
     }
 
     /**
@@ -98,36 +109,36 @@ public class ClienteService {
      */
     private void validarDados(ClienteRequest clienteRequest) {
         if (!validacoes.validarEmail(clienteRequest.getEmail())) {
-            throw new CustomException(CustomException.EMAIL_INVALIDO);
+            throw new EmailValidacaoException();
         }
 
         if (!validacoes.validarNumeroTelefone(clienteRequest.getTelefone())) {
-            throw new CustomException(CustomException.TELEFONE_INVALIDO);
+            throw new NumeroCelularValidacaoException();
         }
 
         if (clienteRequest.getTipo_pessoa() == TipoClienteEnum.FISICA &&
-                !validacoes.validarDataNascimento(clienteRequest.getDataNascimento())) {
-            throw new CustomException(CustomException.DATA_NASCIMENTO_INVALIDA);
+            !validacoes.validarDataNascimento(clienteRequest.getDataNascimento())) {
+            throw new DataNascimentoValidacaoException();
         }
 
         if (clienteRequest.getTipo_pessoa() == TipoClienteEnum.FISICA) {
             if (!validacoes.isCpfValid(clienteRequest.getCpf())) {
-                throw new CustomException(CustomException.CPF_INVALIDO);
+                throw new CepValidacaoExcecao();
             }
 
-            ClienteModel pessoaExistente = clienteDao.procurarPorCpf(clienteRequest.getCpf());
+            ClienteModel pessoaExistente = clienteRepository.procurarPorCpf(clienteRequest.getCpf());
             if (pessoaExistente != null) {
-                throw new CustomException(CustomException.CPF_JA_CADASTRADO);
+                throw new CpfNotFoundException();
             }
 
         } else if (clienteRequest.getTipo_pessoa() == TipoClienteEnum.JURIDICA) {
             if (!validacoes.isCnpjValid(clienteRequest.getCnpj())) {
-                throw new CustomException(CustomException.CNPJ_INVALIDO);
+                throw new CnpjValidacaoException();
             }
 
-            ClienteModel pessoaExistente = clienteDao.procurarPorCnpj(clienteRequest.getCnpj());
+            ClienteModel pessoaExistente = clienteRepository.procurarPorCnpj(clienteRequest.getCnpj());
             if (pessoaExistente != null) {
-                throw new CustomException(CustomException.CNPJ_JA_CADASTRADO);
+                throw new CnpjNotFoundException();
             }
         }
     }
@@ -148,10 +159,10 @@ public class ClienteService {
                 .idPessoa(pessoaSalva.getIdPessoa());
 
         if (tipo_pessoa == TipoClienteEnum.FISICA) {
-            builder.cpf(pessoaSalva.getCpf())
-                    .dataNascimento(pessoaSalva.getDataNascimento());
+            builder.cpf(String.valueOf(pessoaSalva.getClienteFisicaModel()))
+                    .dataNascimento(String.valueOf(pessoaSalva.getClienteFisicaModel()));
         } else if (tipo_pessoa == TipoClienteEnum.JURIDICA) {
-            builder.cnpj(pessoaSalva.getCnpj());
+            builder.cnpj(String.valueOf(pessoaSalva.getClienteJuridicaModel()));
         }
         return builder.build();
     }
@@ -162,9 +173,9 @@ public class ClienteService {
      * @return Um objeto de resposta contendo os detalhes da pessoa encontrada.
      */
     public ClienteResponse procurarPessoaPorCpf(String cpf) {
-        ClienteModel pessoaFisicaEncontrada = clienteDao.procurarPorCpf(cpf);
+        ClienteModel pessoaFisicaEncontrada = clienteRepository.procurarPorCpf(cpf);
         if (Objects.isNull(pessoaFisicaEncontrada)) {
-            throw new CustomException(CustomException.CPF_INVALIDO);
+            throw new CpfNotFoundException();
         }
         return mapearPessoa(TipoClienteEnum.FISICA, pessoaFisicaEncontrada);
     }
@@ -175,10 +186,10 @@ public class ClienteService {
      * @return Um objeto de resposta contendo os detalhes da pessoa encontrada.
      */
     public ClienteResponse procurarPessoaPorCnpj(String cnpj) {
-        ClienteModel pessoaJuridicaEncontrada = clienteDao.procurarPorCnpj(cnpj);
+        ClienteModel pessoaJuridicaEncontrada = clienteRepository.procurarPorCnpj(cnpj);
 
         if (Objects.isNull(pessoaJuridicaEncontrada)) {
-            throw new CustomException(CustomException.CNPJ_JA_CADASTRADO);
+            throw new CnpjNotFoundException();
         }
         return mapearPessoa(TipoClienteEnum.JURIDICA, pessoaJuridicaEncontrada);
     }
@@ -188,11 +199,11 @@ public class ClienteService {
      * @return Uma lista de objetos de resposta contendo os detalhes das pessoas cadastradas.
      */
     public List<ClienteResponse> listarPessoas() {
-        List<ClienteModel> pessoasEncontradas = clienteDao.listarTodasPessoas();
+        List<ClienteModel> pessoasEncontradas = clienteRepository.listarTodasPessoas();
         List<ClienteResponse> clienteResponse = new ArrayList<>();
 
         for (ClienteModel pessoa : pessoasEncontradas) {
-            TipoClienteEnum tipoPessoa = pessoa.getCpf() != null ? TipoClienteEnum.FISICA : TipoClienteEnum.JURIDICA;
+            TipoClienteEnum tipoPessoa = pessoa.getClienteFisicaModel() != null ? TipoClienteEnum.FISICA : TipoClienteEnum.JURIDICA;
             clienteResponse.add(mapearPessoa(tipoPessoa, pessoa));
         }
         return clienteResponse;
@@ -209,18 +220,18 @@ public class ClienteService {
 
 
         if (identificador.length() == 11) { // CPF
-            pessoaExistente = clienteDao.procurarPorCpf(identificador);
+            pessoaExistente = clienteRepository.procurarPorCpf(identificador);
         } else if (identificador.length() == 14) { // CNPJ
-            pessoaExistente = clienteDao.procurarPorCnpj(identificador);
+            pessoaExistente = clienteRepository.procurarPorCnpj(identificador);
         } else {
-            throw new CustomException(CustomException.IDENTIFICADOR_INVALIDO);
+            throw new IdentificadorValidacaoException();
         }
 
         if (Objects.isNull(pessoaExistente)) {
-            throw new CustomException(CustomException.CLIENTE_NAO_ENCONTRADO);
+            throw new ClienteNotFoundException();
         }
 
-        TipoClienteModel tipoClienteModel = tipoClienteDao.buscarPorNomeTipoPessoa(clienteRequest.getTipo_pessoa().name());
+        TipoClienteModel tipoClienteModel = tipoClienteRepository.buscarPorNomeTipoPessoa(clienteRequest.getTipo_pessoa().name());
         String encodedPassword = passwordEncoder.encode(clienteRequest.getSenha());
 
         pessoaExistente.setNome(clienteRequest.getNome());
@@ -229,22 +240,22 @@ public class ClienteService {
         pessoaExistente.setTelefone(clienteRequest.getTelefone());
         pessoaExistente.setTipo_pessoa(tipoClienteModel.getIdTipoPessoa());
 
-        ClienteModel clienteAtualizado = clienteDao.atualizarCliente(pessoaExistente);
+        ClienteModel clienteAtualizado = clienteRepository.atualizarCliente(pessoaExistente);
 
         if (clienteRequest.getTipo_pessoa() == TipoClienteEnum.FISICA) {
-            ClienteFisicaModel pessoaFisica = clienteFisicaDao.procurarCpf(identificador);
+            ClienteFisicoModel pessoaFisica = clienteFisicaRepository.procurarCpf(identificador);
             if (pessoaFisica != null) {
                 pessoaFisica.setIdPessoa(clienteAtualizado.getIdPessoa());
                 pessoaFisica.setCpf(clienteRequest.getCpf());
                 pessoaFisica.setDataNascimento(clienteRequest.getDataNascimento());
-                clienteFisicaDao.atualizarCliFisico(pessoaFisica);
+                clienteFisicaRepository.atualizarCliFisico(pessoaFisica);
             }
         } else if (clienteRequest.getTipo_pessoa() == TipoClienteEnum.JURIDICA) {
-            ClienteJuridicaModel pessoaJuridica = clienteJuridicaDao.procurarCnpj(identificador);
+            ClienteJuridicoModel pessoaJuridica = clienteJuridicaRepository.procurarCnpj(identificador);
             if (pessoaJuridica != null) {
                 pessoaJuridica.setIdPessoa(clienteAtualizado.getIdPessoa());
                 pessoaJuridica.setCnpj(clienteRequest.getCnpj());
-                clienteJuridicaDao.atualizarJuridico(pessoaJuridica);
+                clienteJuridicaRepository.atualizarJuridico(pessoaJuridica);
             }
         }
         return mapearPessoa(clienteRequest.getTipo_pessoa(), clienteAtualizado);
