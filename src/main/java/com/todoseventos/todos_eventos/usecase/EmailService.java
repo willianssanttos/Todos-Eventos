@@ -1,9 +1,11 @@
 package com.todoseventos.todos_eventos.usecase;
 
-import com.todoseventos.todos_eventos.exception.CustomException;
 import com.todoseventos.todos_eventos.model.evento.EnderecoModel;
+import com.todoseventos.todos_eventos.utils.Constantes;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,8 @@ public class EmailService {
     @Autowired
     private JavaMailSender emailSender;
 
+    private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
+
     /**
      * Envia um e-mail de confirmação de inscrição.
      * @param destinatario O endereço de e-mail do destinatário.
@@ -25,6 +29,7 @@ public class EmailService {
      * @param localEvento O local do evento.
      */
     public void enviarEmail(String destinatario, String assunto, String nomePessoa, String nomeEvento, String dataEvento, String localEvento, String linkConfirmacao) {
+        logger.info(Constantes.DebugProcessoEnvioEmail);
         MimeMessage mimeMessage = emailSender.createMimeMessage();
 
         try {
@@ -35,7 +40,7 @@ public class EmailService {
 
             emailSender.send(mimeMessage);
         } catch (MessagingException e) {
-            throw new CustomException(CustomException.ERRO_ENVIAR_EMAIL);
+            logger.error(Constantes.ERRO_ENVIAR_EMAIL);
         }
     }
 
@@ -70,6 +75,7 @@ public class EmailService {
      * @param endereco O endereço do evento.
      */
     public void enviarEmailConfirmacao(String destinatario, String assunto, String nomePessoa, String nomeEvento, String dataEvento, EnderecoModel endereco) {
+        logger.info(Constantes.DebugProcessoEnvioEmail);
         MimeMessage mimeMessage = emailSender.createMimeMessage();
 
         try {
@@ -80,7 +86,7 @@ public class EmailService {
 
             emailSender.send(mimeMessage);
         } catch (MessagingException e) {
-            throw new CustomException(CustomException.ERRO_ENVIAR_EMAIL_CONFIRMACAO);
+            logger.error(Constantes.ERRO_ENVIAR_EMAIL_CONFIRMACAO);
         }
     }
 
@@ -112,6 +118,7 @@ public class EmailService {
      * @param nomeEvento O nome do evento.
      */
     public void enviarEmailCancelamento(String destinatario, String nomePessoa, String nomeEvento) {
+        logger.info(Constantes.DebugProcessoEnvioEmail);
         MimeMessage mimeMessage = emailSender.createMimeMessage();
 
         try {
@@ -122,7 +129,7 @@ public class EmailService {
 
             emailSender.send(mimeMessage);
         } catch (MessagingException e) {
-            throw new CustomException(CustomException.ERRO_ENVIAR_EMAIL_CANCELAMENTO);
+            logger.error(Constantes.ERRO_ENVIAR_EMAIL_CANCELAMENTO);
         }
     }
 

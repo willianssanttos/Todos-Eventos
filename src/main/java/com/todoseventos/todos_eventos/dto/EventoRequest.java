@@ -1,5 +1,6 @@
 package com.todoseventos.todos_eventos.dto;
 
+import com.todoseventos.todos_eventos.dto.Enuns.CategoriaEnum;
 import lombok.*;
 
 @Getter

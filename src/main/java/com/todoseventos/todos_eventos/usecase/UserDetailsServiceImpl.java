@@ -3,6 +3,7 @@ package com.todoseventos.todos_eventos.usecase;
 
 import com.todoseventos.todos_eventos.exception.CustomException;
 import com.todoseventos.todos_eventos.model.cliente.ClienteModel;
+import com.todoseventos.todos_eventos.utils.Constantes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,7 +32,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 });
 
         if (user == null) {
-            throw new CustomException(CustomException.TOKEN_EMAIL + email);
+            throw new CustomException(Constantes.TOKEN_EMAIL + email);
         }
 
         return UserDetailsImpl.build(user);

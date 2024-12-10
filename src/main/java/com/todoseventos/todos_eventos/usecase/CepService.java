@@ -2,6 +2,7 @@ package com.todoseventos.todos_eventos.usecase;
 
 import com.google.gson.Gson;
 import com.todoseventos.todos_eventos.dto.CepResponse;
+import com.todoseventos.todos_eventos.exception.BuscarEnderecoNotFoundException;
 import com.todoseventos.todos_eventos.exception.CustomException;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +42,7 @@ public class CepService {
             return new Gson().fromJson(jsonCep.toString(), CepResponse.class);
         } catch (Exception e) {
             // Lança uma exceção personalizada se ocorrer um erro
-            throw new CustomException(CustomException.ERRO_BUSCAR_ENDERECO_EVENTO + e.getMessage());
+            throw new BuscarEnderecoNotFoundException();
         }
     }
 }
