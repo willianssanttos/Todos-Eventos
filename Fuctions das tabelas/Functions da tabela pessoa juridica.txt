@@ -1,0 +1,38 @@
+CREATE OR REPLACE FUNCTION inserir_cliente_juridico(
+    p_id_pessoa INTEGER,
+    p_cnpj VARCHAR
+)
+RETURNS VOID AS $$
+BEGIN
+    INSERT INTO pessoa_juridica (id_pessoa, cnpj)
+    VALUES (p_id_pessoa, p_cnpj);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION atualizar_cliente_juridico(
+    p_id_pessoa INTEGER,
+    p_cnpj VARCHAR
+)
+RETURNS VOID AS $$
+BEGIN
+    UPDATE pessoa_juridica
+    SET cnpj = p_cnpj
+    WHERE id_pessoa = p_id_pessoa;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION procurar_cliente_juridico_por_cnpj(p_cnpj VARCHAR)
+RETURNS TABLE (
+    cnpj VARCHAR,
+    nome VARCHAR,
+    email VARCHAR
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT pj.cnpj, p.nome, p.email
+    FROM pessoa_juridica pj
+    JOIN pessoa p ON pj.id_pessoa = p.id_pessoa
+    WHERE pj.cnpj = p_cnpj;
+END;
+$$ LANGUAGE plpgsql;
+

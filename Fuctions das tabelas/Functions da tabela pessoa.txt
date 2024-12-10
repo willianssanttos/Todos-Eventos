@@ -1,0 +1,110 @@
+CREATE TYPE pessoa_completa AS (
+   id_pessoa INTEGER,
+   nome VARCHAR,
+   email VARCHAR,
+   senha VARCHAR,
+   telefone VARCHAR,
+   cpf VARCHAR,
+   dataNascimento VARCHAR,
+   nome_tipo_pessoa VARCHAR
+);
+CREATE OR REPLACE FUNCTION procurar_cliente_por_cpf(p_cpf VARCHAR)
+RETURNS SETOF pessoa_completa AS $$
+BEGIN
+   RETURN QUERY
+   SELECT p.id_pessoa, p.nome, p.email, p.senha, p.telefone, pf.cpf, pf.dataNascimento, tp.nome_tipo_pessoa
+   FROM pessoa p
+   LEFT JOIN pessoa_fisica pf ON p.id_pessoa = pf.id_pessoa
+   LEFT JOIN tipo_pessoa tp ON p.id_tipo_pessoa = tp.id_tipo_pessoa
+   WHERE pf.cpf = p_cpf;
+END;
+$$ LANGUAGE plpgsql;
+CREATE TYPE pessoa_juridica_completa AS (
+   id_pessoa INTEGER,
+   nome VARCHAR,
+   email VARCHAR,
+   telefone VARCHAR,
+   senha VARCHAR,
+   cnpj VARCHAR,
+   nome_tipo_pessoa VARCHAR
+);
+CREATE OR REPLACE FUNCTION procurar_cliente_por_cnpj(p_cnpj VARCHAR)
+RETURNS SETOF pessoa_juridica_completa AS $$
+BEGIN
+   RETURN QUERY
+   SELECT p.id_pessoa, p.nome, p.email, p.telefone, p.senha, pj.cnpj, tp.nome_tipo_pessoa
+   FROM pessoa p
+   LEFT JOIN pessoa_juridica pj ON p.id_pessoa = pj.id_pessoa
+   LEFT JOIN tipo_pessoa tp ON p.id_tipo_pessoa = tp.id_tipo_pessoa
+   WHERE pj.cnpj = p_cnpj;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION procurar_cliente_por_email(p_email VARCHAR)
+RETURNS SETOF pessoa AS $$
+BEGIN
+    RETURN QUERY
+    SELECT * FROM pessoa WHERE email = p_email;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION inserir_cliente(
+    p_nome VARCHAR,
+    p_email VARCHAR,
+    p_senha VARCHAR,
+    p_telefone VARCHAR,
+    p_id_tipo_pessoa INTEGER
+)
+RETURNS INTEGER AS $$
+DECLARE
+    new_id INTEGER;
+BEGIN
+    INSERT INTO pessoa (nome, email, senha, telefone, id_tipo_pessoa)
+    VALUES (p_nome, p_email, p_senha, p_telefone, p_id_tipo_pessoa)
+    RETURNING id_pessoa INTO new_id;
+    RETURN new_id;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION atualizar_cliente(
+    p_id_pessoa INTEGER,
+    p_nome VARCHAR,
+    p_email VARCHAR,
+    p_senha VARCHAR,
+    p_telefone VARCHAR,
+    p_id_tipo_pessoa INTEGER
+)
+RETURNS VOID AS $$
+BEGIN
+    UPDATE pessoa
+    SET nome = p_nome,
+        email = p_email,
+        senha = p_senha,
+        telefone = p_telefone,
+        id_tipo_pessoa = p_id_tipo_pessoa
+    WHERE id_pessoa = p_id_pessoa;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION listar_todos_clientes()
+RETURNS TABLE (
+    id_pessoa INTEGER,
+    nome VARCHAR,
+    email VARCHAR,
+    senha VARCHAR,
+    telefone VARCHAR,
+    nome_tipo_pessoa VARCHAR,
+    cpf VARCHAR,
+    dataNascimento VARCHAR,
+    cnpj VARCHAR
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT p.id_pessoa, p.nome, p.email, p.senha, p.telefone, tp.nome_tipo_pessoa, pf.cpf, pf.dataNascimento, pj.cnpj
+    FROM pessoa p
+    LEFT JOIN tipo_pessoa tp ON p.id_tipo_pessoa = tp.id_tipo_pessoa
+    LEFT JOIN pessoa_fisica pf ON p.id_pessoa = pf.id_pessoa
+    LEFT JOIN pessoa_juridica pj ON p.id_pessoa = pj.id_pessoa;
+END;
+$$ LANGUAGE plpgsql;
+

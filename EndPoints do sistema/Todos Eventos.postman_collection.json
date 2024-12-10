@@ -1,0 +1,918 @@
+{
+	"info": {
+		"_postman_id": "498671da-7581-47b1-852c-e058c458986c",
+		"name": "Todos Eventos",
+		"description": "# 🚀 Get started here\n\nThis template guides you through CRUD operations (GET, POST, PUT, DELETE), variables, and tests.\n\n## 🔖 **How to use this template**\n\n#### **Step 1: Send requests**\n\nRESTful APIs allow you to perform CRUD operations using the POST, GET, PUT, and DELETE HTTP methods.\n\nThis collection contains each of these [request](https://learning.postman.com/docs/sending-requests/requests/) types. Open each request and click \"Send\" to see what happens.\n\n#### **Step 2: View responses**\n\nObserve the response tab for status code (200 OK), response time, and size.\n\n#### **Step 3: Send new Body data**\n\nUpdate or add new data in \"Body\" in the POST request. Typically, Body data is also used in PUT request.\n\n```\n{\n    \"name\": \"Add your name in the body\"\n}\n\n ```\n\n#### **Step 4: Update the variable**\n\nVariables enable you to store and reuse values in Postman. We have created a [variable](https://learning.postman.com/docs/sending-requests/variables/) called `base_url` with the sample request [https://postman-api-learner.glitch.me](https://postman-api-learner.glitch.me). Replace it with your API endpoint to customize this collection.\n\n#### **Step 5: Add tests in the \"Scripts\" tab**\n\nAdding tests to your requests can help you confirm that your API is working as expected. You can write test scripts in JavaScript and view the output in the \"Test Results\" tab.\n\n<img src=\"https://content.pstmn.io/fa30ea0a-373d-4545-a668-e7b283cca343/aW1hZ2UucG5n\" width=\"2162\" height=\"1530\">\n\n## 💪 Pro tips\n\n- Use folders to group related requests and organize the collection.\n    \n- Add more [scripts](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/) to verify if the API works as expected and execute workflows.\n    \n\n## 💡Related templates\n\n[API testing basics](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9a37a28-055b-49cd-8c7e-97494a21eb54&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[API documentation](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9c28f47-1253-44af-a2f3-20dce4da1f18&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[Authorization methods](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=31a9a6ed-4cdf-4ced-984c-d12c9aec1c27&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28559637",
+		"_collection_link": "https://speeding-crater-599909.postman.co/workspace/My-Workspace~ad71f8e6-2aa8-4600-88dc-757fe18f2cb9/collection/28559637-498671da-7581-47b1-852c-e058c458986c?action=share&source=collection_link&creator=28559637"
+	},
+	"item": [
+		{
+			"name": "Cliente",
+			"item": [
+				{
+					"name": "Buscar Clientes",
+					"item": [
+						{
+							"name": "Listar Clientes",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"packages": {},
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJpYXBlcmVpcmFAZ21haWwuY29tIiwiaWF0IjoxNzIzMDYxNDE4LCJleHAiOjE3MjMwNjIzMTh9.MU6DzLRLy4j1ZJM30zrfEyrSo6HMFKtqEPJF_uftGnnHaBX0rL5HU52nerjm5BMbfG7ZlTEwwbN80pV2aGl2IA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:27031/api/pessoa",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "27031",
+									"path": [
+										"api",
+										"pessoa"
+									]
+								},
+								"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+							},
+							"response": []
+						},
+						{
+							"name": "Buscar Clientes Por CPF",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzaWx2YUBnbWFpbC5jb20iLCJpYXQiOjE3MjMyMjY5NTYsImV4cCI6MTcyMzIyNzg1Nn0.pBudz4dUYBwyNm5AW4wJU9rlxiGYIjw5iLL3bfOpVXdFXpZvfFgkmwiVbfc0ezVnifZLzvWrzL63FPNnnrUnNg",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "http://localhost:27031/api/pessoa/37075742027",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "27031",
+									"path": [
+										"api",
+										"pessoa",
+										"37075742027"
+									]
+								},
+								"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+							},
+							"response": []
+						},
+						{
+							"name": "Buscar Clientes Por CNPJ",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzaWx2YUBnbWFpbC5jb20iLCJpYXQiOjE3MjMyMjY5NTYsImV4cCI6MTcyMzIyNzg1Nn0.pBudz4dUYBwyNm5AW4wJU9rlxiGYIjw5iLL3bfOpVXdFXpZvfFgkmwiVbfc0ezVnifZLzvWrzL63FPNnnrUnNg",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:27031/api/pessoa/75198037000175",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "27031",
+									"path": [
+										"api",
+										"pessoa",
+										"75198037000175"
+									]
+								},
+								"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Cadastros de Clientes",
+					"item": [
+						{
+							"name": "Cadastrar Cliente Fisica",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0aGFsZW5jYXJkZXZAZ21haWwuY29tIiwiaWF0IjoxNzIyODE4ODAzLCJleHAiOjE3MjI4MTk3MDN9.TiRRw4mb5tPJ7T_9Zh9MKBzkRIt8wN2CvNy46HluttbziahCidrzRHS6aJOovOCbcdNKF7j166jtXzqqZ5Tfuw",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"nome\": \"Marcos Silva\",\n    \"cpf\": \"37075742027\",\n    \"email\": \"silva@gmail.com\",\n    \"senha\": \"12345\",\n    \"telefone\": \"96998693711\",\n    \"dataNascimento\": \"21/07/2000\",\n    \"tipo_pessoa\": \"FISICA\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:27031/api/cliente",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "27031",
+									"path": [
+										"api",
+										"cliente"
+									]
+								},
+								"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+							},
+							"response": []
+						},
+						{
+							"name": "Cadastrar Cliente Juridico",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0aGFsZW5jYXJkZXZAZ21haWwuY29tIiwiaWF0IjoxNzIyNTM2MzA2LCJleHAiOjE3MjI1MzcyMDZ9.sJiwyAVmnuuRo_MfZ-9_48jtLNteQNcKIxHCRw4cIypl_L9LmiQ7J9qK5GLcGMCDjPnoj6dZINJiL5ot635jIQ",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"nome\": \"Publicidade e propagando Ltda\",\n    \"cnpj\": \"75198037000175\",\n    \"email\": \"www.publicidade@ltd.com.br\",\n    \"senha\": \"1234\",\n    \"telefone\": \"(11)3740-1903\",\n    \"tipo_pessoa\": \"JURIDICA\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:27031/api/cliente",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "27031",
+									"path": [
+										"api",
+										"cliente"
+									]
+								},
+								"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Atualizar Clientes",
+					"item": [
+						{
+							"name": "Atualizar Cliente Por CPF",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Successful PUT request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJpYXBlcmVpcmFAZ21haWwuY29tIiwiaWF0IjoxNzIzMjI3MDg3LCJleHAiOjE3MjMyMjc5ODd9.vyQOsx6EOERk1rK25rLg6QjkmGekUPKIXM-ugiQqcq9c4tE8xtZEyDqr0GuyXIXTUDr0VX6Jm32eQ-v1LfE02Q",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"nome\": \"Marcos Silva\",\n    \"cpf\": \"37075742027\",\n    \"email\": \"silva@gmail.com\",\n    \"senha\": \"12345\",\n    \"telefone\": \"96998693711\",\n    \"dataNascimento\": \"21/07/2000\",\n    \"tipo_pessoa\": \"FISICA\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:27031/api/pessoa/37075742027",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "27031",
+									"path": [
+										"api",
+										"pessoa",
+										"37075742027"
+									]
+								},
+								"description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
+							},
+							"response": []
+						},
+						{
+							"name": "Atualizar Cliente Por CNPJ",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Successful PUT request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJsZW9uYXJkb0BnbWFpbC5jb20iLCJpYXQiOjE3MjI4MjM0MDEsImV4cCI6MTcyMjgyNDMwMX0.mU__ecoH6NI33pNmFpoVyL5YWYUwAokT4tekUMUNhV9oFqGlrDCiwu9iC7Oh0bBdUiMzR4IEKt2Lful8L_hOLw",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"nome\": \"Publicidade e propagando Ltda\",\n    \"email\": \"www.publicidade@ltd.com.br\",\n    \"senha\": \"$2a$10$zQ9sPHDcEwWs15QDyXmoY.WOxA86M3y3dJBoHuouKiEhvROPrgjKG\",\n    \"telefone\": \"(11) 37401-903\",\n    \"cnpj\": \"75198037000175\",\n    \"tipo_pessoa\": \"JURIDICA\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:27031/api/pessoa/75198037000175",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "27031",
+									"path": [
+										"api",
+										"pessoa",
+										"75198037000175"
+									]
+								},
+								"description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Evento",
+			"item": [
+				{
+					"name": "Cadastrar Evento",
+					"item": [
+						{
+							"name": "Cadastrar Evento",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJlbWlhbGNsaWVudGUyMjdAZ21haWwuY29tIiwiaWF0IjoxNzIzMDU1MTM0LCJleHAiOjE3MjMwNTYwMzR9.idbiiWoE6Hbzvfsk-rUaZy89aOO-7GjVWCsmj_VEZ7HbrxOP3i8oO_1yAehUpoifrB1hBHadFhJjLQSGo-oa1Q",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"nome_evento\": \"Festival de Música\",\n  \"dataHora_evento\": \"30/04/2025 12:00\",\n  \"dataHora_eventofinal\": \"30/04/2025 23:00\",\n  \"descricao\": \"Festival com várias bandas e artistas.\",\n  \"categoria\": \"Musica\",\n  \"numero\": \"3456\",\n  \"cep\": \"09089-100\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:27031/api/evento",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "27031",
+									"path": [
+										"api",
+										"evento"
+									]
+								},
+								"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Buscar Evento",
+					"item": [
+						{
+							"name": "Listar Todos Eventos",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJpYXBlcmVpcmFAZ21haWwuY29tIiwiaWF0IjoxNzIzMjI3MDg3LCJleHAiOjE3MjMyMjc5ODd9.vyQOsx6EOERk1rK25rLg6QjkmGekUPKIXM-ugiQqcq9c4tE8xtZEyDqr0GuyXIXTUDr0VX6Jm32eQ-v1LfE02Q",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:27031/api/evento",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "27031",
+									"path": [
+										"api",
+										"evento"
+									]
+								},
+								"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+							},
+							"response": []
+						},
+						{
+							"name": "Buscar Eventos Por Nome",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0dnNhbnRvczIyN0BnbWFpbC5jb20iLCJpYXQiOjE3MjMwNTM1NDMsImV4cCI6MTcyMzA1NDQ0M30.HxgEhrQcn5cS6Jh2VBTnpdrVLI5Wfuw1Dr0Q_aw-EKClxg3JfN8VutJHTaxvwwZaSOcM_W_oxqez8C-XjtZSFg",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:27031/api/evento/Saúde e Bem-estar",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "27031",
+									"path": [
+										"api",
+										"evento",
+										"Saúde e Bem-estar"
+									]
+								},
+								"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Atualizar Evento",
+					"item": [
+						{
+							"name": "Atualizar Evento",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJlbWlhbGNsaWVudGUyMjdAZ21haWwuY29tIiwiaWF0IjoxNzIzMDU1MTM0LCJleHAiOjE3MjMwNTYwMzR9.idbiiWoE6Hbzvfsk-rUaZy89aOO-7GjVWCsmj_VEZ7HbrxOP3i8oO_1yAehUpoifrB1hBHadFhJjLQSGo-oa1Q",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"nome_evento\": \"Festival de Música\",\r\n  \"dataHora_evento\": \"30/04/2025 12:00\",\r\n  \"dataHora_eventofinal\": \"30/04/2025 23:00\",\r\n  \"descricao\": \"Festival com várias bandas e artistas.\",\r\n  \"categoria\": \"Musica\",\r\n  \"numero\": \"3456\",\r\n  \"cep\": \"04849-510\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:27031/api/evento/Inovação em IA",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "27031",
+									"path": [
+										"api",
+										"evento",
+										"Inovação em IA"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Deletar ou Encerrar Evento",
+					"item": [
+						{
+							"name": "Deletar  Evento",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJlbWlhbGNsaWVudGUyMjdAZ21haWwuY29tIiwiaWF0IjoxNzIzMDU1MTM0LCJleHAiOjE3MjMwNTYwMzR9.idbiiWoE6Hbzvfsk-rUaZy89aOO-7GjVWCsmj_VEZ7HbrxOP3i8oO_1yAehUpoifrB1hBHadFhJjLQSGo-oa1Q",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:27031/api/evento/2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "27031",
+									"path": [
+										"api",
+										"evento",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Encerrar Evento",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0dnNhbnRvczIyN0BnbWFpbC5jb20iLCJpYXQiOjE3MjMwNTM1NDMsImV4cCI6MTcyMzA1NDQ0M30.HxgEhrQcn5cS6Jh2VBTnpdrVLI5Wfuw1Dr0Q_aw-EKClxg3JfN8VutJHTaxvwwZaSOcM_W_oxqez8C-XjtZSFg",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"cpf\": \"21099502422\",\r\n    \"nome\": \"Luis\",\r\n    \"dataNascimento\": \"1997-01-02\",\r\n    \"categoria\": \"PREMIUM\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:27031/api/encerrar/2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "27031",
+									"path": [
+										"api",
+										"encerrar",
+										"2"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Participação Evento",
+			"item": [
+				{
+					"name": "Inscrição",
+					"item": [
+						{
+							"name": "Inscrever Participante CPF",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJpYXBlcmVpcmFAZ21haWwuY29tIiwiaWF0IjoxNzIzMjI3MDg3LCJleHAiOjE3MjMyMjc5ODd9.vyQOsx6EOERk1rK25rLg6QjkmGekUPKIXM-ugiQqcq9c4tE8xtZEyDqr0GuyXIXTUDr0VX6Jm32eQ-v1LfE02Q",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"cpf\": \"37075742027\",\n    \"idEvento\": 1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:27031/api/participacao",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "27031",
+									"path": [
+										"api",
+										"participacao"
+									]
+								},
+								"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+							},
+							"response": []
+						},
+						{
+							"name": "Inscrever Participante CNPJ",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n   \"cnpj\": \"38968085000179\",\n   \"idEvento\": 3\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:27031/api/participacao",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "27031",
+									"path": [
+										"api",
+										"participacao"
+									]
+								},
+								"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Confirmar Presença",
+					"item": [
+						{
+							"name": "Confirma presença",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0dnNhbnRvczIyN0BnbWFpbC5jb20iLCJpYXQiOjE3MjMwNTM1NDMsImV4cCI6MTcyMzA1NDQ0M30.HxgEhrQcn5cS6Jh2VBTnpdrVLI5Wfuw1Dr0Q_aw-EKClxg3JfN8VutJHTaxvwwZaSOcM_W_oxqez8C-XjtZSFg",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:27031/api/confirmacao/3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "27031",
+									"path": [
+										"api",
+										"confirmacao",
+										"3"
+									]
+								},
+								"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Login",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"mariapereira@gmail.com\",\r\n    \"senha\": \"12345\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:27031/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "27031",
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "id",
+			"value": "1"
+		},
+		{
+			"key": "base_url",
+			"value": "https://postman-rest-api-learner.glitch.me/"
+		}
+	]
+}

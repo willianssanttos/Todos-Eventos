@@ -1,0 +1,43 @@
+CREATE OR REPLACE FUNCTION inserir_cliente_fisico(
+    p_id_pessoa INTEGER,
+    p_cpf VARCHAR,
+    p_data_nascimento VARCHAR
+)
+RETURNS VOID AS $$
+BEGIN
+    INSERT INTO pessoa_fisica (id_pessoa, cpf, dataNascimento)
+    VALUES (p_id_pessoa, p_cpf, p_data_nascimento);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION atualizar_cliente_fisico(
+    p_id_pessoa INTEGER,
+    p_cpf VARCHAR,
+    p_data_nascimento VARCHAR
+)
+RETURNS VOID AS $$
+BEGIN
+    UPDATE pessoa_fisica
+    SET cpf = p_cpf,
+        dataNascimento = p_data_nascimento
+    WHERE id_pessoa = p_id_pessoa;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION procurar_cliente_fisico_por_cpf(p_cpf VARCHAR)
+RETURNS TABLE (
+    cpf VARCHAR,
+    dataNascimento VARCHAR,
+    nome VARCHAR,
+    email VARCHAR
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT pf.cpf, pf.dataNascimento, p.nome, p.email
+    FROM pessoa_fisica pf
+    JOIN pessoa p ON pf.id_pessoa = p.id_pessoa
+    WHERE pf.cpf = p_cpf;
+END;
+$$ LANGUAGE plpgsql;
+
+

@@ -1,0 +1,82 @@
+CREATE TABLE TIPO_PESSOA (
+   id_tipo_pessoa SERIAL NOT NULL PRIMARY KEY,
+   nome_tipo_pessoa VARCHAR(50) NOT NULL
+);
+
+INSERT INTO tipo_pessoa (id_tipo_pessoa , nome_tipo_pessoa) VALUES (1, 'FISICA');
+INSERT INTO tipo_pessoa (id_tipo_pessoa , nome_tipo_pessoa) VALUES (2, 'JURIDICA');
+
+CREATE TABLE PESSOA (
+   id_pessoa SERIAL NOT NULL PRIMARY KEY,
+   nome VARCHAR(60) NOT NULL,
+   email VARCHAR(50) NOT NULL,
+   senha VARCHAR NOT NULL,
+   telefone VARCHAR(20) NOT NULL,
+   id_tipo_pessoa INT NOT NULL,
+   CONSTRAINT fk_id_tipo_pessoa FOREIGN KEY (id_tipo_pessoa) REFERENCES TIPO_PESSOA(id_tipo_pessoa)
+);
+
+CREATE TABLE PESSOA_FISICA (
+   cpf VARCHAR(11) NOT NULL PRIMARY KEY,
+   id_pessoa INT NOT NULL,
+   dataNascimento VARCHAR(20) NOT NULL,
+   CONSTRAINT fk_pessoa_fisica FOREIGN KEY (id_pessoa) REFERENCES PESSOA(id_pessoa)
+);
+
+CREATE TABLE PESSOA_JURIDICA (
+   cnpj VARCHAR(14) NOT NULL PRIMARY KEY,
+   id_pessoa INT NOT NULL,
+   CONSTRAINT fk_pessoa_juridica FOREIGN KEY (id_pessoa) REFERENCES PESSOA(id_pessoa)
+);
+
+CREATE TABLE CATEGORIA (
+   id_categoria SERIAL NOT NULL PRIMARY KEY,
+   nome_categoria VARCHAR(50) NOT NULL
+);
+
+    -- Insere categorias no banco de dados
+    INSERT INTO categoria (id_categoria, nome_categoria) VALUES (1, 'Tecnologia');
+    INSERT INTO categoria (id_categoria, nome_categoria) VALUES (2, 'Saude');
+    INSERT INTO categoria (id_categoria, nome_categoria) VALUES (3, 'Cultura');
+    INSERT INTO categoria (id_categoria, nome_categoria) VALUES (4, 'Negocios');
+    INSERT INTO categoria (id_categoria, nome_categoria) VALUES (5, 'Sustentabilidade');
+    INSERT INTO categoria (id_categoria, nome_categoria) VALUES (6, 'Educacao');
+    INSERT INTO categoria (id_categoria, nome_categoria) VALUES (7, 'Marketing');
+    INSERT INTO categoria (id_categoria, nome_categoria) VALUES (8, 'Workshop');
+    INSERT INTO categoria (id_categoria, nome_categoria) VALUES (9, 'Turismo');
+    INSERT INTO categoria (id_categoria, nome_categoria) VALUES (10, 'Musica');
+    INSERT INTO categoria (id_categoria, nome_categoria) VALUES (11, 'Outros');
+
+CREATE TABLE EVENTO (
+   id_evento SERIAL NOT NULL PRIMARY KEY,
+   nome_evento VARCHAR(60) NOT NULL,
+   dataHora_evento VARCHAR(20) NOT NULL,
+   dataHora_eventofinal VARCHAR(20) NOT NULL,
+   descricao VARCHAR NOT NULL,
+   status VARCHAR(20),
+   id_categoria INT NOT NULL,
+   CONSTRAINT fk_categoria FOREIGN KEY (id_categoria) REFERENCES CATEGORIA(id_categoria)
+);
+
+CREATE TABLE ENDERECO (
+   id_endereco SERIAL NOT NULL PRIMARY KEY,
+   rua VARCHAR(50) NOT NULL,
+   numero VARCHAR(50),
+   bairro VARCHAR(50) NOT NULL,
+   cidade VARCHAR(50) NOT NULL,
+   uf VARCHAR(2) NOT NULL,
+   cep VARCHAR(10) NOT NULL,
+   id_evento INT NOT NULL,
+   CONSTRAINT fk_endereco_evento FOREIGN KEY (id_evento) REFERENCES EVENTO(id_evento)
+);
+
+CREATE TABLE PARTICIPACAO (
+   id_participacao SERIAL NOT NULL PRIMARY KEY,
+   cpf VARCHAR(11),
+   cnpj VARCHAR(14),
+   id_evento INT NOT NULL,
+   status VARCHAR(20) NOT NULL,
+   CONSTRAINT fk_participacao_pessoa_fisica FOREIGN KEY (cpf) REFERENCES PESSOA_FISICA(cpf),
+   CONSTRAINT fk_participacao_pessoa_juridica FOREIGN KEY (cnpj) REFERENCES PESSOA_JURIDICA(cnpj),
+   CONSTRAINT fk_participacao_evento FOREIGN KEY (id_evento) REFERENCES EVENTO(id_evento)
+);

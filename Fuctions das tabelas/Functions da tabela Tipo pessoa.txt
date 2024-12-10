@@ -1,0 +1,7 @@
+CREATE OR REPLACE FUNCTION procurar_tipo_cliente_por_nome(p_nome_tipo_pessoa VARCHAR)
+RETURNS SETOF TIPO_PESSOA AS $$
+BEGIN
+    RETURN QUERY
+    SELECT * FROM TIPO_PESSOA WHERE nome_tipo_pessoa = p_nome_tipo_pessoa;
+END;
+$$ LANGUAGE plpgsql;

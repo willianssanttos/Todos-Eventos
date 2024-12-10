@@ -3,7 +3,7 @@ spring:
     username: postgres
     url: jdbc:postgresql://localhost:5432/postgres
     driverClassName: org.postgresql.Driver
-    password: 123456
+    password: postgres1234
   application:
     name: Aplicacao REST de uma plataforma Todos Eventos
     projeto.jwtSecret: bxOksa8BHgdAhR80Y3pEYvS5M+MnF2sheFDqprkTqQ4odqoszJLW1ikw64/nT/dTvlgrcBTq7HfK1B9Gai2h5A==

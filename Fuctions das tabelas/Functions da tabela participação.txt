@@ -1,0 +1,46 @@
+CREATE OR REPLACE FUNCTION inserir_participacao(
+    p_cpf VARCHAR(11),
+    p_cnpj VARCHAR(14),
+    p_id_evento INTEGER,
+    p_status VARCHAR(20)
+)
+RETURNS INTEGER AS $$
+DECLARE
+    new_id INTEGER;
+BEGIN
+    INSERT INTO PARTICIPACAO (cpf, cnpj, id_evento, status)
+    VALUES (p_cpf, p_cnpj, p_id_evento, p_status)
+    RETURNING id_participacao INTO new_id;
+    RETURN new_id;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION atualizar_participacao(
+    p_id_participacao INTEGER,
+    p_status VARCHAR(20)
+)
+RETURNS VOID AS $$
+BEGIN
+    UPDATE PARTICIPACAO
+    SET status = p_status
+    WHERE id_participacao = p_id_participacao;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION procurar_participacao_por_id(
+    p_id_participacao INTEGER
+)
+RETURNS SETOF PARTICIPACAO AS $$
+BEGIN
+    RETURN QUERY SELECT * FROM PARTICIPACAO WHERE id_participacao = p_id_participacao;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION procurar_participacoes_por_id_evento(
+    p_id_evento INTEGER
+)
+RETURNS SETOF PARTICIPACAO AS $$
+BEGIN
+    RETURN QUERY SELECT * FROM PARTICIPACAO WHERE id_evento = p_id_evento;
+END;
+$$ LANGUAGE plpgsql;

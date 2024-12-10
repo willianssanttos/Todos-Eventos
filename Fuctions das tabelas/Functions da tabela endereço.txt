@@ -1,0 +1,55 @@
+CREATE OR REPLACE FUNCTION inserir_endereco(
+    rua VARCHAR(50),
+    numero VARCHAR(50),
+    bairro VARCHAR(50),
+    cidade VARCHAR(50),
+    uf VARCHAR(2),
+    cep VARCHAR(10),
+    id_evento INTEGER
+)
+RETURNS VOID AS $$
+BEGIN
+    INSERT INTO ENDERECO (rua, numero, bairro, cidade, uf, cep, id_evento) 
+    VALUES (rua, numero, bairro, cidade, uf, cep, id_evento);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION atualizar_endereco(
+    p_rua VARCHAR(50),
+    p_numero VARCHAR(50),
+    p_bairro VARCHAR(50),
+    p_cidade VARCHAR(50),
+    p_uf VARCHAR(2),
+    p_cep VARCHAR(10),
+    p_id_evento INTEGER
+)
+RETURNS VOID AS $$
+BEGIN
+    UPDATE ENDERECO
+    SET rua = p_rua,
+        numero = p_numero,
+        bairro = p_bairro,
+        cidade = p_cidade,
+        uf = p_uf,
+        cep = p_cep
+    WHERE id_evento = p_id_evento;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION procurar_endereco_por_id_evento(
+    p_id_evento INTEGER
+)
+RETURNS SETOF ENDERECO AS $$
+BEGIN
+    RETURN QUERY SELECT * FROM ENDERECO WHERE id_evento = p_id_evento;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION deletar_endereco(
+    p_id_evento INTEGER
+)
+RETURNS VOID AS $$
+BEGIN
+    DELETE FROM ENDERECO WHERE id_evento = p_id_evento;
+END;
+$$ LANGUAGE plpgsql;
